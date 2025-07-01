@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Checkout - Kane's Bookstore</title>
+    <meta name="description" content="Complete your purchase with cryptocurrency. Secure, fast, and private payments.">
+    
+    <!-- Kane's Bookstore Styles -->
+    <link rel="stylesheet" href="assets/css/kanes-bookstore.css">
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- Prevent indexing -->
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+    <!-- Header -->
+    <header class="kb-header">
+        <div class="container">
+            <nav class="kb-nav">
+                <a href="/" class="kb-logo">Kane's Bookstore</a>
+                <ul class="kb-nav-links">
+                    <li><a href="/products">Products</a></li>
+                    <li><a href="/support">Support</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Checkout Progress -->
+    <section style="background: var(--light-gray); padding: 1rem 0;">
+        <div class="container">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: 0.9rem;">
+                <span style="color: var(--gray-color);">1. Product Selected</span>
+                <span style="color: var(--gray-color);">→</span>
+                <span style="color: var(--primary-color); font-weight: 600;">2. Payment Method</span>
+                <span style="color: var(--gray-color);">→</span>
+                <span style="color: var(--gray-color);">3. Confirmation</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0; min-height: 70vh;">
+        
+        <!-- Order Summary (Fixed Header) -->
+        <section class="order-summary" style="margin-bottom: 3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2>Order Summary</h2>
+                <span style="color: var(--gray-color); font-size: 0.9rem;">Secure Crypto Checkout</span>
+            </div>
+            <div class="order-item">
+                <div>
+                    <div style="font-weight: 600;" id="order-product-name">Digital Marketing Mastery</div>
+                    <div style="font-size: 0.9rem; color: var(--gray-color);">Digital Download + NFT Certificate</div>
+                </div>
+                <div style="font-weight: 600;" id="order-amount">$25.00</div>
+            </div>
+            <div style="display: flex; justify-content: between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <span style="font-weight: 700; font-size: 1.125rem;">Total:</span>
+                <span style="font-weight: 700; font-size: 1.125rem;" id="order-total">$25.00</span>
+            </div>
+        </section>
+
+        <!-- Currency Selection Step -->
+        <section id="currency-selection" class="crypto-checkout">
+            <h2 style="text-align: center; margin-bottom: 1rem;">Choose Your Cryptocurrency</h2>
+            <p style="text-align: center; color: var(--gray-color); margin-bottom: 3rem;">
+                Select your preferred cryptocurrency for payment. All transactions are secure and processed via blockchain.
+            </p>
+            
+            <div class="currency-selector">
+                <!-- Bitcoin -->
+                <div class="currency-card" data-currency="btc">
+                    <div class="currency-icon" style="color: #f7931a;">₿</div>
+                    <div class="currency-name">Bitcoin</div>
+                    <div class="currency-amount" data-crypto-amount="btc">≈ 0.0008 BTC</div>
+                    <div class="currency-network">Bitcoin Network</div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--gray-color);">
+                        ⚡ Confirmation: ~10 minutes<br>
+                        💰 Network fee: ~$2-5
+                    </div>
+                </div>
+                
+                <!-- Ethereum -->
+                <div class="currency-card" data-currency="eth">
+                    <div class="currency-icon" style="color: #627eea;">Ξ</div>
+                    <div class="currency-name">Ethereum</div>
+                    <div class="currency-amount" data-crypto-amount="eth">≈ 0.0156 ETH</div>
+                    <div class="currency-network">Ethereum Network</div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--gray-color);">
+                        ⚡ Confirmation: ~2 minutes<br>
+                        💰 Network fee: ~$1-3
+                    </div>
+                </div>
+                
+                <!-- USDC -->
+                <div class="currency-card" data-currency="usdc">
+                    <div class="currency-icon" style="color: #2775ca;">💎</div>
+                    <div class="currency-name">USD Coin</div>
+                    <div class="currency-amount" data-crypto-amount="usdc">≈ 25.00 USDC</div>
+                    <div class="currency-network">Ethereum Network</div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--gray-color);">
+                        ⚡ Confirmation: ~2 minutes<br>
+                        💰 Network fee: ~$1-3
+                    </div>
+                </div>
+                
+                <!-- Solana -->
+                <div class="currency-card" data-currency="sol">
+                    <div class="currency-icon" style="color: #9945ff;">☀️</div>
+                    <div class="currency-name">Solana</div>
+                    <div class="currency-amount" data-crypto-amount="sol">≈ 0.58 SOL</div>
+                    <div class="currency-network">Solana Network</div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--gray-color);">
+                        ⚡ Confirmation: ~30 seconds<br>
+                        💰 Network fee: ~$0.01
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Continue Button -->
+            <div style="text-align: center; margin: 3rem 0;">
+                <button id="continue-with-crypto" class="btn btn-secondary btn-lg" disabled>
+                    Continue with Selected Currency
+                </button>
+                <div style="margin-top: 1rem;">
+                    <a href="/checkout" style="color: var(--gray-color); text-decoration: none;">← Back to Payment Options</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Details Step (Hidden initially) -->
+        <section id="payment-details" class="crypto-checkout" style="display: none;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2>Complete Your Payment</h2>
+                <p style="color: var(--gray-color);">
+                    Send the exact amount below to complete your purchase
+                </p>
+            </div>
+            
+            <div class="payment-details">
+                <!-- Selected Currency Info -->
+                <div style="text-align: center; margin-bottom: 2rem; padding: 1.5rem; background: white; border-radius: var(--border-radius-lg); border: 2px solid var(--primary-color);">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;" id="selected-currency-icon">₿</div>
+                    <div style="font-size: 1.125rem; font-weight: 600;" id="selected-currency-name">Bitcoin</div>
+                    <div style="font-size: 0.9rem; color: var(--gray-color);" id="selected-currency-network">Bitcoin Network</div>
+                </div>
+                
+                <!-- Payment Amount -->
+                <div class="payment-amount" id="payment-amount">
+                    0.0008 BTC
+                </div>
+                
+                <!-- Wallet Address -->
+                <div class="wallet-address-section">
+                    <h4 style="text-align: center; margin-bottom: 1rem;">Send payment to this address:</h4>
+                    <div class="wallet-address" id="wallet-address" data-address="">
+                        Loading payment address...
+                    </div>
+                    <div style="text-align: center; margin: 1rem 0;">
+                        <button class="copy-button" id="copy-address-btn" data-action="copy-address">
+                            📋 Copy Address
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- QR Code -->
+                <div style="text-align: center; margin: 2rem 0;">
+                    <h4 style="margin-bottom: 1rem;">Or scan with your wallet:</h4>
+                    <div id="qr-code-container" class="qr-code-container" style="background: white; padding: 1rem; border-radius: var(--border-radius); display: inline-block;">
+                        <div style="width: 200px; height: 200px; background: var(--light-gray); display: flex; align-items: center; justify-content: center; color: var(--gray-color);">
+                            Loading QR...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Timer and Status -->
+                <div style="text-align: center; margin: 2rem 0;">
+                    <div class="payment-timer" id="payment-timer">
+                        Complete payment within 15:00
+                    </div>
+                    <div class="payment-status" id="payment-status">
+                        🔄 Waiting for Payment
+                    </div>
+                </div>
+                
+                <!-- Instructions -->
+                <div class="payment-instructions" style="background: #e3f2fd; padding: 1.5rem; border-radius: var(--border-radius); margin: 2rem 0; border-left: 4px solid var(--primary-color);">
+                    <h4 style="margin-bottom: 1rem; color: var(--dark-color);">📋 Payment Instructions:</h4>
+                    <ol style="margin: 0; padding-left: 1.5rem; color: var(--dark-color);">
+                        <li>Copy the wallet address above or scan the QR code</li>
+                        <li>Open your cryptocurrency wallet</li>
+                        <li>Send the <strong>exact amount</strong> to the address</li>
+                        <li>Wait for confirmation (usually 1-3 confirmations)</li>
+                        <li>Your download will be available immediately after confirmation</li>
+                    </ol>
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.7); border-radius: var(--border-radius); font-size: 0.9rem;">
+                        ⚠️ <strong>Important:</strong> Send only the specified cryptocurrency to this address. Sending other coins may result in permanent loss.
+                    </div>
+                </div>
+                
+                <!-- Support -->
+                <div style="text-align: center; margin: 2rem 0;">
+                    <p style="color: var(--gray-color); margin-bottom: 1rem;">
+                        Need help with your crypto payment?
+                    </p>
+                    <a href="/support/crypto-help" class="btn btn-outline">
+                        📞 Contact Crypto Support
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Success (Hidden initially) -->
+        <section id="payment-success" style="display: none; text-align: center; padding: 3rem 1rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+            <h2 style="color: var(--success-color); margin-bottom: 1rem;">Payment Confirmed!</h2>
+            <p style="color: var(--gray-color); margin-bottom: 2rem;">
+                Your cryptocurrency payment has been confirmed. Redirecting to your downloads...
+            </p>
+            <div class="loading" style="margin: 2rem auto;"></div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--light-gray); padding: 2rem 0; margin-top: 3rem;">
+        <div class="container text-center">
+            <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <span style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-color);">
+                    🔒 SSL Secured
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-color);">
+                    ⛓️ Blockchain Verified
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-color);">
+                    🛡️ Money Back Guarantee
+                </span>
+            </div>
+            <p style="color: var(--gray-color); font-size: 0.8rem; margin: 0;">
+                Payments processed securely via NowPayments • <a href="/privacy" style="color: var(--primary-color);">Privacy Policy</a> • <a href="/terms" style="color: var(--primary-color);">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/kanes-bookstore.js"></script>
+    
+    <script>
+        // Crypto Checkout Controller
+        class CryptoCheckout {
+            constructor() {
+                this.selectedCurrency = null;
+                this.paymentData = null;
+                this.statusPoller = null;
+                this.timer = null;
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.loadOrderData();
+                this.loadExchangeRates();
+            }
+            
+            setupEventListeners() {
+                // Currency selection
+                document.querySelectorAll('.currency-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        this.selectCurrency(card.dataset.currency);
+                    });
+                });
+                
+                // Continue button
+                document.getElementById('continue-with-crypto').addEventListener('click', () => {
+                    this.proceedToPayment();
+                });
+                
+                // Copy address button
+                document.getElementById('copy-address-btn').addEventListener('click', () => {
+                    this.copyWalletAddress();
+                });
+                
+                // Get URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const preselectedCurrency = urlParams.get('currency');
+                if (preselectedCurrency) {
+                    this.selectCurrency(preselectedCurrency);
+                }
+            }
+            
+            loadOrderData() {
+                // Try to get order data from URL parameters or localStorage
+                const urlParams = new URLSearchParams(window.location.search);
+                const productId = urlParams.get('product') || 'digital-marketing-mastery';
+                const amount = urlParams.get('amount') || '25.00';
+                
+                // Update order summary
+                document.getElementById('order-product-name').textContent = 'Digital Marketing Mastery';
+                document.getElementById('order-amount').textContent = `$${amount}`;
+                document.getElementById('order-total').textContent = `$${amount}`;
+            }
+            
+            async loadExchangeRates() {
+                try {
+                    const response = await fetch('/api/crypto-rates');
+                    const rates = await response.json();
+                    this.updateCryptoPricing(rates);
+                } catch (error) {
+                    console.error('Failed to load exchange rates:', error);
+                    // Use fallback rates
+                    this.updateCryptoPricing({
+                        btc: 42000,
+                        eth: 2500,
+                        usdc: 1.00,
+                        sol: 65
+                    });
+                }
+            }
+            
+            updateCryptoPricing(rates) {
+                const usdAmount = 25.00;
+                
+                // Update BTC
+                const btcAmount = (usdAmount / rates.btc).toFixed(8);
+                document.querySelector('[data-crypto-amount="btc"]').textContent = `≈ ${btcAmount} BTC`;
+                
+                // Update ETH
+                const ethAmount = (usdAmount / rates.eth).toFixed(4);
+                document.querySelector('[data-crypto-amount="eth"]').textContent = `≈ ${ethAmount} ETH`;
+                
+                // Update USDC
+                document.querySelector('[data-crypto-amount="usdc"]').textContent = `≈ ${usdAmount.toFixed(2)} USDC`;
+                
+                // Update SOL
+                const solAmount = (usdAmount / rates.sol).toFixed(3);
+                document.querySelector('[data-crypto-amount="sol"]').textContent = `≈ ${solAmount} SOL`;
+                
+                this.exchangeRates = rates;
+            }
+            
+            selectCurrency(currency) {
+                // Remove previous selection
+                document.querySelectorAll('.currency-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                // Add selection to clicked card
+                const selectedCard = document.querySelector(`[data-currency="${currency}"]`);
+                selectedCard.classList.add('selected');
+                
+                this.selectedCurrency = currency;
+                
+                // Enable continue button
+                const continueBtn = document.getElementById('continue-with-crypto');
+                continueBtn.disabled = false;
+                continueBtn.textContent = `Continue with ${this.getCurrencyName(currency)}`;
+                
+                // Track selection
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'select_crypto_currency', {
+                        currency: currency,
+                        amount_usd: 25.00
+                    });
+                }
+            }
+            
+            getCurrencyName(currency) {
+                const names = {
+                    'btc': 'Bitcoin',
+                    'eth': 'Ethereum',
+                    'usdc': 'USD Coin',
+                    'sol': 'Solana'
+                };
+                return names[currency] || currency.toUpperCase();
+            }
+            
+            getCurrencyIcon(currency) {
+                const icons = {
+                    'btc': '₿',
+                    'eth': 'Ξ',
+                    'usdc': '💎',
+                    'sol': '☀️'
+                };
+                return icons[currency] || '💰';
+            }
+            
+            async proceedToPayment() {
+                if (!this.selectedCurrency) return;
+                
+                try {
+                    this.showLoading();
+                    
+                    // Create payment
+                    const response = await fetch('/api/payments/crypto/create-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            product_id: 'digital-marketing-mastery',
+                            pay_currency: this.selectedCurrency,
+                            amount: 25.00
+                        })
+                    });
+                    
+                    const paymentData = await response.json();
+                    
+                    if (paymentData.error) {
+                        throw new Error(paymentData.error);
+                    }
+                    
+                    this.paymentData = paymentData;
+                    this.showPaymentDetails();
+                    
+                } catch (error) {
+                    this.hideLoading();
+                    alert('Failed to create payment. Please try again.');
+                    console.error('Payment creation error:', error);
+                }
+            }
+            
+            showPaymentDetails() {
+                this.hideLoading();
+                
+                // Hide currency selection
+                document.getElementById('currency-selection').style.display = 'none';
+                
+                // Show payment details
+                document.getElementById('payment-details').style.display = 'block';
+                
+                // Update currency info
+                document.getElementById('selected-currency-icon').textContent = this.getCurrencyIcon(this.selectedCurrency);
+                document.getElementById('selected-currency-name').textContent = this.getCurrencyName(this.selectedCurrency);
+                document.getElementById('selected-currency-network').textContent = this.getCurrencyNetwork(this.selectedCurrency);
+                
+                // Update payment details
+                document.getElementById('payment-amount').textContent = `${this.paymentData.pay_amount} ${this.selectedCurrency.toUpperCase()}`;
+                document.getElementById('wallet-address').textContent = this.paymentData.pay_address;
+                document.getElementById('wallet-address').dataset.address = this.paymentData.pay_address;
+                
+                // Generate QR code
+                this.generateQRCode();
+                
+                // Start timer and polling
+                this.startPaymentTimer();
+                this.startStatusPolling();
+            }
+            
+            getCurrencyNetwork(currency) {
+                const networks = {
+                    'btc': 'Bitcoin Network',
+                    'eth': 'Ethereum Network',
+                    'usdc': 'Ethereum Network',
+                    'sol': 'Solana Network'
+                };
+                return networks[currency] || 'Blockchain Network';
+            }
+            
+            generateQRCode() {
+                const container = document.getElementById('qr-code-container');
+                container.innerHTML = '';
+                
+                const address = this.paymentData.pay_address;
+                const amount = this.paymentData.pay_amount;
+                const currency = this.selectedCurrency;
+                
+                // Create payment URI
+                let paymentURI = address;
+                if (currency === 'btc') {
+                    paymentURI = `bitcoin:${address}?amount=${amount}`;
+                } else if (currency === 'eth' || currency === 'usdc') {
+                    paymentURI = `ethereum:${address}?value=${amount}`;
+                } else if (currency === 'sol') {
+                    paymentURI = `solana:${address}?amount=${amount}`;
+                }
+                
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(container, {
+                        text: paymentURI,
+                        width: 200,
+                        height: 200,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                }
+            }
+            
+            async copyWalletAddress() {
+                const address = document.getElementById('wallet-address').dataset.address;
+                
+                try {
+                    await navigator.clipboard.writeText(address);
+                    
+                    const button = document.getElementById('copy-address-btn');
+                    const originalText = button.textContent;
+                    button.textContent = '✓ Copied!';
+                    button.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('copied');
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Failed to copy:', error);
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = address;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Address copied to clipboard!');
+                }
+            }
+            
+            startPaymentTimer() {
+                let timeRemaining = 15 * 60; // 15 minutes
+                const timerElement = document.getElementById('payment-timer');
+                
+                this.timer = setInterval(() => {
+                    timeRemaining--;
+                    
+                    if (timeRemaining <= 0) {
+                        this.onPaymentTimeout();
+                        return;
+                    }
+                    
+                    const minutes = Math.floor(timeRemaining / 60);
+                    const seconds = timeRemaining % 60;
+                    timerElement.textContent = `Complete payment within ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    // Change color when time is running out
+                    if (timeRemaining <= 60) {
+                        timerElement.style.color = 'var(--danger-color)';
+                    } else if (timeRemaining <= 300) {
+                        timerElement.style.color = 'var(--warning-color)';
+                    }
+                }, 1000);
+            }
+            
+            startStatusPolling() {
+                if (!this.paymentData.payment_id) return;
+                
+                this.statusPoller = setInterval(async () => {
+                    try {
+                        const response = await fetch(`/api/payments/crypto/status/${this.paymentData.payment_id}`);
+                        const status = await response.json();
+                        
+                        this.updatePaymentStatus(status);
+                        
+                        if (['finished', 'failed', 'expired'].includes(status.payment_status)) {
+                            clearInterval(this.statusPoller);
+                        }
+                        
+                    } catch (error) {
+                        console.error('Status polling error:', error);
+                    }
+                }, 10000); // Poll every 10 seconds
+            }
+            
+            updatePaymentStatus(status) {
+                const statusElement = document.getElementById('payment-status');
+                
+                const statusMap = {
+                    'waiting': '🔄 Waiting for Payment',
+                    'confirming': '⏳ Confirming Transaction',
+                    'confirmed': '✅ Payment Confirmed',
+                    'sending': '📤 Processing Payment',
+                    'finished': '✅ Payment Complete',
+                    'failed': '❌ Payment Failed',
+                    'expired': '⏰ Payment Expired'
+                };
+                
+                statusElement.textContent = statusMap[status.payment_status] || status.payment_status;
+                
+                if (status.confirmations) {
+                    statusElement.textContent += ` (${status.confirmations} confirmations)`;
+                }
+                
+                // Handle completed payment
+                if (status.payment_status === 'finished') {
+                    this.onPaymentComplete(status);
+                }
+            }
+            
+            onPaymentComplete(status) {
+                // Clear timer and poller
+                if (this.timer) clearInterval(this.timer);
+                if (this.statusPoller) clearInterval(this.statusPoller);
+                
+                // Show success screen
+                document.getElementById('payment-details').style.display = 'none';
+                document.getElementById('payment-success').style.display = 'block';
+                
+                // Track successful purchase
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'purchase', {
+                        transaction_id: status.payment_id,
+                        value: 25.00,
+                        currency: 'USD',
+                        payment_method: 'crypto',
+                        crypto_currency: this.selectedCurrency
+                    });
+                }
+                
+                // Redirect to success page
+                setTimeout(() => {
+                    window.location.href = `/checkout/success?payment_id=${status.payment_id}`;
+                }, 3000);
+            }
+            
+            onPaymentTimeout() {
+                if (this.timer) clearInterval(this.timer);
+                if (this.statusPoller) clearInterval(this.statusPoller);
+                
+                alert('Payment time expired. Please start a new payment.');
+                window.location.href = '/checkout';
+            }
+            
+            showLoading() {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.innerHTML = '<div class="loading"></div>';
+                document.body.appendChild(overlay);
+            }
+            
+            hideLoading() {
+                const overlay = document.querySelector('.loading-overlay');
+                if (overlay) overlay.remove();
+            }
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new CryptoCheckout();
+        });
+    </script>
+</body>
+</html> 

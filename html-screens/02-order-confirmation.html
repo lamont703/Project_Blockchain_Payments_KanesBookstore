@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Kane's Bookstore</title>
+    <meta name="description"
+        content="Your order has been confirmed! Download your digital products and access your NFT certificate.">
+
+    <!-- Kane's Bookstore Styles -->
+    <link rel="stylesheet" href="assets/css/kanes-bookstore.css">
+
+    <!-- Prevent indexing of confirmation pages -->
+    <meta name="robots" content="noindex, nofollow">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="kb-header">
+        <div class="container">
+            <nav class="kb-nav">
+                <a href="/" class="kb-logo">Kane's Bookstore</a>
+                <ul class="kb-nav-links">
+                    <li><a href="/products">Products</a></li>
+                    <li><a href="/account">My Account</a></li>
+                    <li><a href="/support">Support</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Success Header -->
+    <section class="success-header">
+        <div class="container">
+            <div class="success-icon">🎉</div>
+            <h1 class="success-title">Payment Successful!</h1>
+            <p class="success-subtitle">Thank you for your purchase. Your order has been confirmed.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0;">
+
+        <!-- Order Details -->
+        <section class="order-details">
+            <div class="order-header">
+                <div>
+                    <div class="order-number" id="order-number">Order #KB-2024-001</div>
+                    <div class="order-date" id="order-date">December 15, 2024, 2:30 PM</div>
+                </div>
+                <div class="order-status">
+                    <span
+                        style="background: #d4edda; color: #155724; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                        ✅ Completed
+                    </span>
+                </div>
+            </div>
+
+            <div class="order-items">
+                <div class="order-item-detail">
+                    <div class="item-details">
+                        <div class="item-name" id="product-name">Digital Marketing Mastery</div>
+                        <div class="item-meta">
+                            <span>Amount: <span id="order-amount">$25.00</span></span> |
+                            <span>Method: <span id="payment-method">Stripe</span></span> |
+                            <span>Transaction: <span id="transaction-id">pi_3N...</span></span>
+                        </div>
+                    </div>
+                    <div class="item-price" id="item-price">$25.00</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                <p>📧 Receipt sent to: <span id="customer-email">customer@example.com</span></p>
+                <p>⚡ Expected delivery: <strong>Instant</strong></p>
+            </div>
+        </section>
+
+        <!-- Downloads Section -->
+        <section class="downloads-section">
+            <div class="downloads-header">
+                <span style="font-size: 2rem;">⬇️</span>
+                <h2 class="downloads-title">Your Downloads</h2>
+            </div>
+
+            <div class="download-buttons">
+                <a href="#" class="download-btn" id="product-download" data-download-type="product">
+                    <span>📥</span>
+                    <span>Download Your Book</span>
+                </a>
+
+                <a href="#" class="download-btn nft" id="nft-download" data-download-type="nft">
+                    <span>🎁</span>
+                    <span>Download NFT Certificate</span>
+                </a>
+            </div>
+
+            <!-- Additional Access -->
+            <div class="additional-access">
+                <h4>🔗 Additional Access</h4>
+                <ul>
+                    <li><a href="/bonus-materials" id="bonus-link">Bonus materials portal</a></li>
+                    <li><a href="/community" id="community-link">Exclusive community access</a></li>
+                    <li><a href="/support?priority=true" id="support-link">Priority customer support</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- What's Next Section -->
+        <section style="margin: 3rem 0;">
+            <h3 style="text-align: center; margin-bottom: 2rem;">📱 What's Next?</h3>
+
+            <div class="next-steps">
+                <a href="/products" class="btn btn-outline btn-block">
+                    🏠 Continue Shopping
+                </a>
+
+                <a href="/account" class="btn btn-outline btn-block">
+                    👤 View My Account
+                </a>
+
+                <a href="/support" class="btn btn-outline btn-block">
+                    📞 Contact Support
+                </a>
+            </div>
+        </section>
+
+        <!-- Security Notice -->
+        <section
+            style="background: var(--light-gray); padding: 2rem; border-radius: var(--border-radius-lg); text-align: center; margin: 2rem 0;">
+            <h4>🔒 Transaction Security</h4>
+            <p style="margin-bottom: 0.5rem;">Your payment was processed securely through our encrypted payment system.
+            </p>
+            <p style="font-size: 0.9rem; color: var(--gray-color); margin: 0;">
+                Transaction ID: <span id="full-transaction-id" style="font-family: monospace;">...</span>
+            </p>
+        </section>
+
+        <!-- Social Sharing (Optional) -->
+        <section style="text-align: center; margin: 3rem 0;">
+            <h4>📢 Share Your Purchase</h4>
+            <p style="color: var(--gray-color); margin-bottom: 1rem;">Let others know about this amazing resource!</p>
+
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <a href="#" class="btn btn-outline" id="share-twitter"
+                    style="background: #1da1f2; color: white; border-color: #1da1f2;">
+                    🐦 Share on Twitter
+                </a>
+                <a href="#" class="btn btn-outline" id="share-facebook"
+                    style="background: #1877f2; color: white; border-color: #1877f2;">
+                    📘 Share on Facebook
+                </a>
+                <a href="#" class="btn btn-outline" id="share-linkedin"
+                    style="background: #0a66c2; color: white; border-color: #0a66c2;">
+                    💼 Share on LinkedIn
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="assets/js/kanes-bookstore.js"></script>
+
+    <script>
+        // Order Confirmation Page Logic
+        class OrderConfirmation {
+            constructor() {
+                this.orderId = this.getUrlParameter('order_id') || this.getUrlParameter('session_id');
+                this.paymentId = this.getUrlParameter('payment_id');
+                this.init();
+            }
+
+            init() {
+                this.loadOrderData();
+                this.setupDownloadTracking();
+                this.setupSocialSharing();
+                this.trackPurchaseCompletion();
+            }
+
+            getUrlParameter(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            async loadOrderData() {
+                try {
+                    const orderId = this.orderId || this.paymentId;
+                    if (!orderId) return;
+
+                    const response = await fetch(`/api/orders/${orderId}`);
+                    const data = await response.json();
+
+                    this.populateOrderDetails(data);
+                    this.setupDownloadLinks(data);
+
+                } catch (error) {
+                    console.error('Failed to load order data:', error);
+                }
+            }
+
+            populateOrderDetails(data) {
+                const { order, product, customer } = data;
+
+                // Update order information
+                document.getElementById('order-number').textContent = `Order #${order.id}`;
+                document.getElementById('order-date').textContent = new Date(order.created_at).toLocaleString();
+                document.getElementById('product-name').textContent = product.title;
+                document.getElementById('order-amount').textContent = `$${order.amount}`;
+                document.getElementById('item-price').textContent = `$${order.amount}`;
+                document.getElementById('customer-email').textContent = customer.email;
+                document.getElementById('full-transaction-id').textContent = order.transaction_id;
+
+                // Update payment method display
+                const paymentMethodElement = document.getElementById('payment-method');
+                if (order.payment_method === 'stripe') {
+                    paymentMethodElement.textContent = 'Credit Card (Stripe)';
+                } else if (order.payment_method === 'crypto') {
+                    paymentMethodElement.textContent = `Crypto (${order.payment_currency?.toUpperCase()})`;
+                }
+
+                // Update transaction ID display
+                const transactionElement = document.getElementById('transaction-id');
+                if (order.transaction_id) {
+                    const shortId = order.transaction_id.length > 12
+                        ? order.transaction_id.substring(0, 12) + '...'
+                        : order.transaction_id;
+                    transactionElement.textContent = shortId;
+                }
+            }
+
+            setupDownloadLinks(data) {
+                if (!data.download_links) return;
+
+                // Product download
+                const productDownload = document.getElementById('product-download');
+                if (productDownload && data.download_links.product) {
+                    productDownload.href = data.download_links.product;
+                }
+
+                // NFT download
+                const nftDownload = document.getElementById('nft-download');
+                if (nftDownload && data.download_links.nft) {
+                    nftDownload.href = data.download_links.nft;
+                }
+
+                // Additional access links
+                if (data.access_links) {
+                    const bonusLink = document.getElementById('bonus-link');
+                    const communityLink = document.getElementById('community-link');
+                    const supportLink = document.getElementById('support-link');
+
+                    if (bonusLink && data.access_links.bonus_materials) {
+                        bonusLink.href = data.access_links.bonus_materials;
+                    }
+                    if (communityLink && data.access_links.community) {
+                        communityLink.href = data.access_links.community;
+                    }
+                    if (supportLink && data.access_links.support) {
+                        supportLink.href = data.access_links.support;
+                    }
+                }
+            }
+
+            setupDownloadTracking() {
+                // Track download clicks
+                document.querySelectorAll('[data-download-type]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const downloadType = e.target.closest('[data-download-type]').dataset.downloadType;
+
+                        // Track download
+                        if (typeof gtag !== 'undefined') {
+                            gtag('event', 'file_download', {
+                                file_type: downloadType,
+                                order_id: this.orderId,
+                                file_name: downloadType === 'product' ? 'digital-marketing-mastery.pdf' : 'nft-certificate.pdf'
+                            });
+                        }
+
+                        console.log(`Download tracked: ${downloadType}`);
+                    });
+                });
+            }
+
+            setupSocialSharing() {
+                const productTitle = document.getElementById('product-name').textContent;
+                const shareText = `Just purchased "${productTitle}" from Kane's Bookstore! 📚`;
+                const shareUrl = window.location.origin;
+
+                // Twitter
+                const twitterShare = document.getElementById('share-twitter');
+                if (twitterShare) {
+                    twitterShare.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                }
+
+                // Facebook
+                const facebookShare = document.getElementById('share-facebook');
+                if (facebookShare) {
+                    facebookShare.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                }
+
+                // LinkedIn
+                const linkedinShare = document.getElementById('share-linkedin');
+                if (linkedinShare) {
+                    linkedinShare.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+                }
+            }
+
+            trackPurchaseCompletion() {
+                // Google Analytics 4
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'purchase', {
+                        transaction_id: this.orderId,
+                        value: 25.00,
+                        currency: 'USD',
+                        items: [{
+                            item_id: 'digital-marketing-mastery',
+                            item_name: 'Digital Marketing Mastery',
+                            category: 'Digital Products',
+                            quantity: 1,
+                            price: 25.00
+                        }]
+                    });
+                }
+
+                // Facebook Pixel
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'Purchase', {
+                        value: 25.00,
+                        currency: 'USD',
+                        content_ids: ['digital-marketing-mastery'],
+                        content_type: 'product'
+                    });
+                }
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new OrderConfirmation();
+        });
+    </script>
+</body>
+
+</html>

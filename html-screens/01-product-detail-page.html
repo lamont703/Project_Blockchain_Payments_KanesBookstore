@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Marketing Mastery - Kane's Bookstore</title>
+    <meta name="description"
+        content="Master digital marketing with our comprehensive guide. Get instant access plus exclusive NFT certificate.">
+
+    <!-- Kane's Bookstore Styles -->
+    <link rel="stylesheet" href="assets/css/kanes-bookstore.css">
+
+    <!-- External Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+    <!-- GoHighLevel Integration -->
+    <script>
+        // GoHighLevel data integration
+        window.addEventListener('DOMContentLoaded', function () {
+            // Auto-populate product data from GHL custom fields
+            if (typeof window.leadConnector !== 'undefined') {
+                const contact = window.leadConnector.getContact();
+                console.log('GHL Contact Data:', contact);
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="kb-header">
+        <div class="container">
+            <nav class="kb-nav">
+                <a href="/" class="kb-logo">Kane's Bookstore</a>
+                <ul class="kb-nav-links">
+                    <li><a href="/products">Products</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/support">Support</a></li>
+                    <li><a href="/account">Account</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Product Detail Section -->
+    <main class="product-detail">
+        <div class="container">
+            <div class="row">
+                <!-- Product Image -->
+                <div class="col col-12 col-lg-6">
+                    <img src="https://via.placeholder.com/800x600/4fc3f7/white?text=Digital+Marketing+Mastery"
+                        alt="Digital Marketing Mastery Book Cover" class="product-image" data-product-image>
+                </div>
+
+                <!-- Product Information -->
+                <div class="col col-12 col-lg-6">
+                    <!-- Product Title -->
+                    <h1 class="product-title" data-product-title>
+                        Digital Marketing Mastery
+                    </h1>
+
+                    <!-- Pricing Display -->
+                    <div class="pricing-container">
+                        <div class="usd-price" data-product-price>$25.00</div>
+                        <div class="crypto-equivalent">
+                            ≈ 50 Tomlin Coins<br>
+                            <span data-crypto="btc">≈ 0.0008 BTC</span><br>
+                            <span data-crypto="eth">≈ 0.0156 ETH</span><br>
+                            <span data-crypto="usdc">≈ 25.00 USDC</span>
+                        </div>
+                    </div>
+
+                    <!-- Product Description -->
+                    <div class="product-description" data-product-description>
+                        <p>Transform your business with our comprehensive digital marketing guide. This expertly crafted
+                            resource covers everything from social media strategy to conversion optimization.</p>
+
+                        <p>Perfect for entrepreneurs, marketers, and business owners looking to master the digital
+                            landscape and drive real results.</p>
+
+                        <p><strong>What's Included:</strong></p>
+                        <ul>
+                            <li>200+ page comprehensive guide</li>
+                            <li>Step-by-step implementation strategies</li>
+                            <li>Real-world case studies</li>
+                            <li>Bonus templates and worksheets</li>
+                            <li>Exclusive community access</li>
+                        </ul>
+                    </div>
+
+                    <!-- Payment Buttons -->
+                    <div class="payment-buttons">
+                        <button class="btn btn-primary btn-block btn-lg" data-action="stripe-payment"
+                            data-product-id="digital-marketing-mastery" data-product-title="Digital Marketing Mastery"
+                            data-product-price="25.00"
+                            data-product-image="https://via.placeholder.com/800x600/4fc3f7/white?text=Digital+Marketing+Mastery"
+                            data-product-description="Transform your business with our comprehensive digital marketing guide.">
+                            💳 Buy with Card ($25.00)
+                        </button>
+
+                        <button class="btn btn-secondary btn-block btn-lg" data-action="show-payment-modal">
+                            ₿ Choose Payment Method
+                        </button>
+                    </div>
+
+                    <!-- Product Features -->
+                    <div class="product-features">
+                        <ul>
+                            <li>Instant download after purchase</li>
+                            <li>30-day money-back guarantee</li>
+                            <li>NFT certificate of ownership included</li>
+                            <li>Lifetime access to updates</li>
+                            <li>Priority customer support</li>
+                        </ul>
+                    </div>
+
+                    <!-- Security Badges -->
+                    <div class="security-badges">
+                        <div class="security-badge">
+                            <span>🔒</span>
+                            <span>SSL Secured</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>💳</span>
+                            <span>Stripe Protected</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>₿</span>
+                            <span>Crypto Payments</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>🛡️</span>
+                            <span>Money Back Guarantee</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Payment Method Selection Modal -->
+    <div id="payment-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Choose Payment Method</h2>
+                <button class="modal-close" data-action="close-modal">✕</button>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <div class="order-item">
+                    <span>Digital Marketing Mastery</span>
+                    <span>Qty: 1</span>
+                </div>
+                <div class="order-total">
+                    Total: $25.00
+                </div>
+            </div>
+
+            <!-- Payment Options -->
+            <div class="payment-options">
+                <!-- Stripe Option -->
+                <div class="payment-option stripe" data-action="stripe-payment">
+                    <div class="payment-icon">💳</div>
+                    <h3>Credit/Debit Card</h3>
+                    <ul class="payment-features">
+                        <li>✓ Instant processing</li>
+                        <li>✓ Secure via Stripe</li>
+                        <li>✓ All major cards accepted</li>
+                        <li>✓ Apple Pay & Google Pay</li>
+                    </ul>
+                    <button class="payment-button">Pay with Card</button>
+                </div>
+
+                <!-- Crypto Option -->
+                <div class="payment-option crypto" data-action="crypto-payment">
+                    <div class="payment-icon">₿</div>
+                    <h3>Cryptocurrency</h3>
+                    <ul class="payment-features">
+                        <li>✓ Bitcoin, Ethereum, USDC, Solana</li>
+                        <li>✓ Secure blockchain payment</li>
+                        <li>✓ Lower transaction fees</li>
+                        <li>✓ Decentralized & private</li>
+                    </ul>
+                    <button class="payment-button">Pay with Crypto</button>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="text-center mt-3">
+                <p style="font-size: 0.9rem; color: var(--gray-color);">
+                    🔒 Payments secured by industry leaders<br>
+                    <a href="/support" style="color: var(--primary-color);">📞 Need help? Contact us</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crypto Currency Selection (Hidden by default) -->
+    <div id="crypto-selection" style="display: none;">
+        <div class="container">
+            <div class="crypto-checkout">
+                <h2 class="text-center mb-4">Select Cryptocurrency</h2>
+
+                <div class="currency-selector">
+                    <!-- Bitcoin -->
+                    <div class="currency-card" data-currency="btc" data-crypto="btc">
+                        <div class="currency-icon">₿</div>
+                        <div class="currency-name">Bitcoin</div>
+                        <div class="currency-amount">≈ 0.0008 BTC</div>
+                        <div class="currency-network">Bitcoin Network</div>
+                    </div>
+
+                    <!-- Ethereum -->
+                    <div class="currency-card" data-currency="eth" data-crypto="eth">
+                        <div class="currency-icon">Ξ</div>
+                        <div class="currency-name">Ethereum</div>
+                        <div class="currency-amount">≈ 0.0156 ETH</div>
+                        <div class="currency-network">Ethereum Network</div>
+                    </div>
+
+                    <!-- USDC -->
+                    <div class="currency-card" data-currency="usdc" data-crypto="usdc">
+                        <div class="currency-icon">💎</div>
+                        <div class="currency-name">USD Coin</div>
+                        <div class="currency-amount">≈ 25.00 USDC</div>
+                        <div class="currency-network">Ethereum Network</div>
+                    </div>
+
+                    <!-- Solana -->
+                    <div class="currency-card" data-currency="sol" data-crypto="sol">
+                        <div class="currency-icon">☀️</div>
+                        <div class="currency-name">Solana</div>
+                        <div class="currency-amount">≈ 0.58 SOL</div>
+                        <div class="currency-network">Solana Network</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crypto Payment Details (Hidden by default) -->
+    <div id="crypto-payment" style="display: none;">
+        <div class="container">
+            <div class="crypto-checkout">
+                <h2 class="text-center mb-4">Complete Your Crypto Payment</h2>
+
+                <div class="payment-details">
+                    <!-- Payment Amount -->
+                    <div class="payment-amount" id="payment-amount">
+                        0.0008 BTC
+                    </div>
+
+                    <!-- Wallet Address -->
+                    <div class="wallet-address-section">
+                        <h4>Send payment to this address:</h4>
+                        <div class="wallet-address" id="wallet-address" data-address="">
+                            bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                        </div>
+                        <button class="copy-button" data-action="copy-address">
+                            📋 Copy Address
+                        </button>
+                    </div>
+
+                    <!-- QR Code -->
+                    <div class="text-center">
+                        <h4>Or scan QR code:</h4>
+                        <div id="qr-code-container" class="qr-code-container"></div>
+                    </div>
+
+                    <!-- Timer and Status -->
+                    <div class="text-center">
+                        <div class="payment-timer" id="payment-timer">
+                            Complete payment within 15:00
+                        </div>
+                        <div class="payment-status" id="payment-status">
+                            🔄 Waiting for Payment
+                        </div>
+                        <div class="payment-instructions">
+                            💡 Send the exact amount to the address above. Payment will be confirmed automatically.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/kanes-bookstore.js"></script>
+
+    <!-- Analytics -->
+    <script>
+        // Google Analytics 4
+        gtag('config', 'GA_MEASUREMENT_ID', {
+            page_title: 'Product Detail - Digital Marketing Mastery',
+            page_location: window.location.href
+        });
+
+        // Track product view
+        gtag('event', 'view_item', {
+            currency: 'USD',
+            value: 25.00,
+            items: [{
+                item_id: 'digital-marketing-mastery',
+                item_name: 'Digital Marketing Mastery',
+                category: 'Digital Products',
+                price: 25.00,
+                quantity: 1
+            }]
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,415 @@
+<!-- Kane's Bookstore - Payment Modal Component -->
+<!-- This component can be embedded in any GoHighLevel page -->
+
+<!-- Include CSS (add to page head) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/your-cdn/kanes-bookstore.css">
+
+<!-- Payment Modal Trigger Button -->
+<button class="kb-purchase-btn" data-product-id="digital-marketing-mastery"
+    data-product-title="Digital Marketing Mastery" data-product-price="25.00"
+    data-product-image="https://via.placeholder.com/800x600/4fc3f7/white?text=Digital+Marketing+Mastery"
+    onclick="openPaymentModal()" style="
+        background: linear-gradient(135deg, #4fc3f7 0%, #3182ce 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 1.125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        margin: 1rem auto;
+        display: block;
+    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 25px rgba(0, 0, 0, 0.15)'"
+    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)'">
+    🛒 Purchase Now - $25.00
+</button>
+
+<!-- Payment Modal (Hidden by default) -->
+<div id="kb-payment-modal" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 1rem;
+">
+    <div style="
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        transform: scale(0.9);
+        transition: all 0.3s ease;
+    ">
+        <!-- Modal Header -->
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        ">
+            <h2 style="
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1a202c;
+                margin: 0;
+            ">Choose Payment Method</h2>
+            <button onclick="closePaymentModal()" style="
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: #718096;
+                padding: 0.5rem;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.background='#f7fafc'" onmouseout="this.style.background='none'">
+                ✕
+            </button>
+        </div>
+
+        <!-- Order Summary -->
+        <div style="
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        ">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.5rem;
+                font-size: 0.95rem;
+            ">
+                <span>Digital Marketing Mastery</span>
+                <span>Qty: 1</span>
+            </div>
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: #1a202c;
+                padding-top: 1rem;
+                border-top: 1px solid #e2e8f0;
+                margin-top: 1rem;
+            ">
+                <span>Total:</span>
+                <span>$25.00</span>
+            </div>
+        </div>
+
+        <!-- Payment Options -->
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Stripe Option -->
+            <div onclick="initiateStripePayment()" style="
+                background: linear-gradient(135deg, #635bff 0%, #4f46e5 100%);
+                color: white;
+                border: 2px solid #635bff;
+                border-radius: 12px;
+                padding: 1.5rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 25px rgba(0, 0, 0, 0.15)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">💳</div>
+                <h3 style="margin: 0 0 1rem 0; font-size: 1.25rem;">Credit/Debit Card</h3>
+                <ul style="list-style: none; margin: 1rem 0; padding: 0;">
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ Instant processing</li>
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ Secure via Stripe</li>
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ All major cards accepted</li>
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ Apple Pay & Google Pay</li>
+                </ul>
+                <button style="
+                    background: rgba(255, 255, 255, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    width: 100%;
+                    margin-top: 1rem;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'"
+                    onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+                    Pay with Card
+                </button>
+            </div>
+
+            <!-- Crypto Option -->
+            <div onclick="initiateCryptoPayment()" style="
+                background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                color: white;
+                border: 2px solid #f59e0b;
+                border-radius: 12px;
+                padding: 1.5rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 25px rgba(0, 0, 0, 0.15)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">₿</div>
+                <h3 style="margin: 0 0 1rem 0; font-size: 1.25rem;">Cryptocurrency</h3>
+                <ul style="list-style: none; margin: 1rem 0; padding: 0;">
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ Bitcoin, Ethereum, USDC, Solana</li>
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ Secure blockchain payment</li>
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ Lower transaction fees</li>
+                    <li style="padding: 0.25rem 0; font-size: 0.9rem;">✓ Decentralized & private</li>
+                </ul>
+                <button style="
+                    background: rgba(255, 255, 255, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    width: 100%;
+                    margin-top: 1rem;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'"
+                    onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+                    Pay with Crypto
+                </button>
+            </div>
+        </div>
+
+        <!-- Security Notice -->
+        <div style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0;">
+            <p style="
+                font-size: 0.9rem;
+                color: #718096;
+                margin-bottom: 0.5rem;
+            ">
+                🔒 Payments secured by industry leaders
+            </p>
+            <a href="/support" style="
+                color: #4fc3f7;
+                text-decoration: none;
+                font-size: 0.9rem;
+                font-weight: 500;
+            ">📞 Need help? Contact us</a>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Functions -->
+<script>
+    // Global functions for the payment modal
+
+    function openPaymentModal() {
+        const modal = document.getElementById('kb-payment-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.style.opacity = '0';
+
+            // Animate in
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                const content = modal.querySelector('div');
+                content.style.transform = 'scale(1)';
+            }, 10);
+
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+
+            // Track event
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'view_checkout_options', {
+                    currency: 'USD',
+                    value: 25.00
+                });
+            }
+        }
+    }
+
+    function closePaymentModal() {
+        const modal = document.getElementById('kb-payment-modal');
+        if (modal) {
+            modal.style.opacity = '0';
+            const content = modal.querySelector('div');
+            content.style.transform = 'scale(0.9)';
+
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+    }
+
+    function initiateStripePayment() {
+        // Track analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'begin_checkout', {
+                currency: 'USD',
+                value: 25.00,
+                payment_method: 'stripe'
+            });
+        }
+
+        // Show loading
+        showLoading();
+
+        // Create Stripe checkout session
+        fetch('/api/payments/stripe/create-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                product_id: 'digital-marketing-mastery',
+                customer_email: getCustomerEmail(),
+                success_url: window.location.origin + '/checkout/success?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url: window.location.origin + '/checkout/cancel'
+            })
+        })
+            .then(response => response.json())
+            .then(session => {
+                hideLoading();
+                if (session.url) {
+                    window.location.href = session.url;
+                } else {
+                    alert('Unable to process payment. Please try again.');
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Stripe payment error:', error);
+                alert('Unable to process payment. Please try again.');
+            });
+    }
+
+    function initiateCryptoPayment() {
+        // Track analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'select_payment_method', {
+                payment_method: 'crypto'
+            });
+        }
+
+        // Close modal and redirect to crypto checkout
+        closePaymentModal();
+        window.location.href = '/checkout/crypto?product=digital-marketing-mastery&amount=25.00';
+    }
+
+    function getCustomerEmail() {
+        // Try to get email from GoHighLevel
+        if (typeof window.leadConnector !== 'undefined') {
+            const contact = window.leadConnector.getContact();
+            if (contact && contact.email) {
+                return contact.email;
+            }
+        }
+
+        // Fallback to form field if available
+        const emailField = document.querySelector('input[type="email"]');
+        if (emailField && emailField.value) {
+            return emailField.value;
+        }
+
+        return null;
+    }
+
+    function showLoading() {
+        const overlay = document.createElement('div');
+        overlay.id = 'kb-loading-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+        `;
+
+        overlay.innerHTML = `
+            <div style="
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #4fc3f7;
+                border-radius: 50%;
+                animation: kb-spin 1s linear infinite;
+            "></div>
+            <style>
+                @keyframes kb-spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+
+        document.body.appendChild(overlay);
+    }
+
+    function hideLoading() {
+        const overlay = document.getElementById('kb-loading-overlay');
+        if (overlay) {
+            overlay.remove();
+        }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function (e) {
+        const modal = document.getElementById('kb-payment-modal');
+        if (e.target === modal) {
+            closePaymentModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closePaymentModal();
+        }
+    });
+</script>
+
+<!-- Usage Instructions -->
+<!-- 
+To use this component in GoHighLevel:
+
+1. Copy this entire code block
+2. Paste it into a Custom HTML element in your GHL page
+3. Update the data attributes on the button with your product details:
+   - data-product-id: Your product identifier
+   - data-product-title: Product name to display
+   - data-product-price: Price in USD
+   - data-product-image: Product image URL
+
+4. Make sure your backend API endpoints are configured:
+   - /api/payments/stripe/create-session
+   - /api/payments/crypto/create-payment
+
+5. Customize the styling by modifying the inline styles or adding CSS classes
+
+Example usage:
+<button 
+    class="kb-purchase-btn" 
+    data-product-id="my-product"
+    data-product-title="My Amazing Product"
+    data-product-price="49.99"
+    onclick="openPaymentModal()"
+>
+    Buy Now - $49.99
+</button>
+-->
