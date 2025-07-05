@@ -82,6 +82,17 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin: 2rem 0;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .quick-actions.three-columns {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .quick-actions.four-columns {
+            grid-template-columns: repeat(4, 1fr);
         }
 
         .quick-action {
@@ -245,8 +256,53 @@
             margin: 0;
         }
 
+        .quick-action.nft-exclusive {
+            border: 2px solid #c084fc;
+            background: linear-gradient(135deg, #fdf4ff 0%, #f3e8ff 100%);
+        }
+
+        .quick-action.nft-exclusive:hover {
+            border-color: #a855f7;
+            box-shadow: 0 10px 25px rgba(192, 132, 252, 0.2);
+        }
+
+        .quick-action.purchase-exclusive {
+            border: 2px solid #10b981;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .quick-action.purchase-exclusive:hover {
+            border-color: #059669;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+        }
+
+        .action-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #3b82f6;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .action-badge.nft {
+            background: #a855f7;
+        }
+
+        .action-badge.purchase {
+            background: #10b981;
+        }
+
         @media (max-width: 768px) {
             .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions.three-columns,
+            .quick-actions.four-columns {
                 grid-template-columns: 1fr;
             }
 
@@ -465,6 +521,23 @@
             generateSessionId();
         });
 
+        function organizeQuickActions() {
+            const quickActions = document.querySelector('.quick-actions');
+            const visibleActions = Array.from(quickActions.children).filter(action =>
+                action.style.display !== 'none'
+            );
+
+            // Remove existing column classes
+            quickActions.classList.remove('three-columns', 'four-columns');
+
+            // Add appropriate column class based on visible actions
+            if (visibleActions.length === 3) {
+                quickActions.classList.add('three-columns');
+            } else if (visibleActions.length === 4) {
+                quickActions.classList.add('four-columns');
+            }
+        }
+
         function initializePageFlow() {
             const indicator = document.getElementById('access-type-indicator');
             const indicatorText = document.getElementById('access-type-text');
@@ -491,9 +564,13 @@
                 verificationStep.textContent = 'NFT Verified';
                 guidanceText.textContent = 'Your NFT grants you free access! Click "Start Reading Now" to begin, or browse our collection to see what other NFTs unlock.';
 
-                // Show NFT-specific sections
+                // Show NFT-specific sections and actions
                 document.getElementById('nft-access-section').style.display = 'block';
+                document.getElementById('download-action').style.display = 'block';
                 document.getElementById('nft-action').style.display = 'block';
+
+                // Update action descriptions for NFT holders
+                updateActionForNFTHolder();
 
                 // Populate NFT details
                 if (walletAddress) {
@@ -525,10 +602,13 @@
                 verificationStep.textContent = 'Payment Verified';
                 guidanceText.textContent = 'Your payment is complete! Start reading now, or download your book for offline access.';
 
-                // Show purchase-specific sections
+                // Show purchase-specific sections and actions
                 document.getElementById('order-details-section').style.display = 'block';
                 document.getElementById('download-action').style.display = 'block';
                 document.getElementById('nft-action').style.display = 'block';
+
+                // Update action descriptions for purchasers
+                updateActionForPurchaser();
 
                 // Populate order details
                 const orderNumber = `KB-${Date.now().toString().slice(-6)}`;
@@ -557,6 +637,11 @@
                     }]
                 });
             }
+
+            // Organize the quick actions layout after setting visibility
+            setTimeout(() => {
+                organizeQuickActions();
+            }, 100);
         }
 
         function setupRecommendations() {
@@ -616,6 +701,70 @@
             document.getElementById('session-id').textContent = sessionId;
         }
 
+        function updateActionForNFTHolder() {
+            // Update download action for NFT holders
+            const downloadAction = document.getElementById('download-action');
+            if (downloadAction) {
+                const downloadTitle = downloadAction.querySelector('h4');
+                const downloadDesc = downloadAction.querySelector('p');
+                const downloadBtn = downloadAction.querySelector('.quick-action-btn');
+
+                downloadAction.classList.add('nft-exclusive');
+                downloadAction.innerHTML += '<div class="action-badge nft">NFT</div>';
+
+                downloadTitle.textContent = 'Access Your Content';
+                downloadDesc.textContent = 'Read online or download for offline access (NFT privilege)';
+                downloadBtn.textContent = 'Download Book';
+            }
+
+            // Update NFT action for NFT holders
+            const nftAction = document.getElementById('nft-action');
+            if (nftAction) {
+                const nftTitle = nftAction.querySelector('h4');
+                const nftDesc = nftAction.querySelector('p');
+                const nftBtn = nftAction.querySelector('.quick-action-btn');
+
+                nftAction.classList.add('nft-exclusive');
+                nftAction.innerHTML += '<div class="action-badge nft">YOUR NFT</div>';
+
+                nftTitle.textContent = 'Your NFT Proof';
+                nftDesc.textContent = 'View your NFT that grants access to this content';
+                nftBtn.textContent = 'View NFT Details';
+            }
+        }
+
+        function updateActionForPurchaser() {
+            // Update download action for purchasers
+            const downloadAction = document.getElementById('download-action');
+            if (downloadAction) {
+                const downloadTitle = downloadAction.querySelector('h4');
+                const downloadDesc = downloadAction.querySelector('p');
+                const downloadBtn = downloadAction.querySelector('.quick-action-btn');
+
+                downloadAction.classList.add('purchase-exclusive');
+                downloadAction.innerHTML += '<div class="action-badge purchase">PURCHASED</div>';
+
+                downloadTitle.textContent = 'Download Your Book';
+                downloadDesc.textContent = 'Get a permanent copy for offline reading';
+                downloadBtn.textContent = 'Download PDF';
+            }
+
+            // Update NFT action for purchasers
+            const nftAction = document.getElementById('nft-action');
+            if (nftAction) {
+                const nftTitle = nftAction.querySelector('h4');
+                const nftDesc = nftAction.querySelector('p');
+                const nftBtn = nftAction.querySelector('.quick-action-btn');
+
+                nftAction.classList.add('purchase-exclusive');
+                nftAction.innerHTML += '<div class="action-badge purchase">BONUS</div>';
+
+                nftTitle.textContent = 'NFT Certificate';
+                nftDesc.textContent = 'Download your digital ownership certificate';
+                nftBtn.textContent = 'Get Certificate';
+            }
+        }
+
         // Action functions
         function startReading() {
             gtag('event', 'start_reading', {
@@ -651,18 +800,101 @@
         }
 
         function downloadNFT() {
-            gtag('event', 'download_nft', {
+            gtag('event', 'nft_action', {
                 access_type: accessType,
-                wallet_address: walletAddress
+                wallet_address: walletAddress,
+                action: accessType === 'nft' ? 'view_nft' : 'download_certificate'
             });
 
-            // Simulate NFT certificate download
-            const link = document.createElement('a');
-            link.href = '#';
-            link.download = 'nft-certificate.json';
-            link.click();
+            if (accessType === 'nft') {
+                // For NFT holders - show NFT details or link to collection
+                showNFTDetails();
+            } else {
+                // For purchasers - download NFT certificate
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = 'nft-certificate.json';
+                link.click();
 
-            showNotification('🎁 NFT Certificate', 'Your digital ownership certificate is ready');
+                showNotification('🎁 NFT Certificate', 'Your digital ownership certificate is ready');
+            }
+        }
+
+        function showNFTDetails() {
+            // Show NFT details modal or redirect to NFT marketplace
+            const nftModal = document.createElement('div');
+            nftModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+            `;
+
+            nftModal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 12px;
+                    max-width: 500px;
+                    text-align: center;
+                    position: relative;
+                ">
+                    <button onclick="this.parentElement.parentElement.remove()" style="
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: #666;
+                    ">×</button>
+                    
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎨</div>
+                    <h3 style="color: #1f2937; margin-bottom: 1rem;">Your NFT Access</h3>
+                    <p style="color: #4b5563; margin-bottom: 1.5rem;">
+                        Your NFT from Kane's Premium Collection grants you free access to this book and other premium content.
+                    </p>
+                    
+                    <div style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <p><strong>Collection:</strong> Kane's Premium Collection</p>
+                        <p><strong>Token ID:</strong> ${nftTokenId || '#1234'}</p>
+                        <p><strong>Wallet:</strong> ${walletAddress ? walletAddress.substring(0, 6) + '...' + walletAddress.substring(38) : 'Connected'}</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: center;">
+                        <button onclick="window.open('https://opensea.io/collection/kanes-premium-collection', '_blank')" style="
+                            background: #3b82f6;
+                            color: white;
+                            border: none;
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">View on OpenSea</button>
+                        
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                            background: #6b7280;
+                            color: white;
+                            border: none;
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Close</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(nftModal);
+
+            showNotification('🎨 NFT Details', 'Your NFT grants premium access benefits');
         }
 
         function continueShopping() {
