@@ -49,7 +49,7 @@
                     </p>
                 </div>
                 <div style="display: flex; gap: 1rem; align-items: center;">
-                    <select id="date-range"
+                    <select id="date-range" title="Select date range for analytics"
                         style="padding: 0.5rem; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
                         <option value="today">Today</option>
                         <option value="week">This Week</option>
@@ -139,6 +139,70 @@
                 </div>
             </section>
 
+            <!-- Web3 Analytics Section -->
+            <section style="margin-bottom: 3rem;">
+                <h3 style="margin-bottom: 2rem; font-size: 1.5rem; color: var(--dark-color);">
+                    🔗 Web3 Analytics
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <!-- Wallet Connections -->
+                    <div
+                        style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 2rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow);">
+                        <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            🔌 Wallet Connections
+                        </h4>
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;" id="wallet-connections">
+                            156
+                        </div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">
+                            ↗ +23 today
+                        </div>
+                    </div>
+
+                    <!-- NFT Validations -->
+                    <div
+                        style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; padding: 2rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow);">
+                        <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            🎨 NFT Validations
+                        </h4>
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;" id="nft-validations">
+                            89
+                        </div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">
+                            ↗ +12 today
+                        </div>
+                    </div>
+
+                    <!-- Active Readers -->
+                    <div
+                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 2rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow);">
+                        <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            📚 Active Readers
+                        </h4>
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;" id="active-readers">
+                            34
+                        </div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">
+                            ↗ +8 today
+                        </div>
+                    </div>
+
+                    <!-- NFT Conversion Rate -->
+                    <div
+                        style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 2rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow);">
+                        <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            🎯 NFT Conversion
+                        </h4>
+                        <div style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;" id="nft-conversion">
+                            57%
+                        </div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">
+                            ↗ +5.2% vs last week
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Analytics Charts -->
             <section style="margin-bottom: 3rem;">
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
@@ -163,13 +227,13 @@
                 </div>
             </section>
 
-            <!-- Recent Transactions -->
+            <!-- Recent Activity -->
             <section
                 style="background: white; border-radius: var(--border-radius-lg); box-shadow: var(--shadow); overflow: hidden;">
                 <div style="padding: 2rem; border-bottom: 1px solid var(--border-color);">
-                    <div style="display: flex; justify-content: between; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-                            🧾 Recent Transactions
+                            🧾 Recent Activity
                         </h3>
                         <a href="/admin/orders"
                             style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
@@ -182,19 +246,103 @@
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead style="background: var(--light-gray);">
                             <tr>
-                                <th style="padding: 1rem; text-align: left; font-weight: 600;">Order ID</th>
-                                <th style="padding: 1rem; text-align: left; font-weight: 600;">Product</th>
-                                <th style="padding: 1rem; text-align: left; font-weight: 600;">Amount</th>
-                                <th style="padding: 1rem; text-align: left; font-weight: 600;">Payment</th>
+                                <th style="padding: 1rem; text-align: left; font-weight: 600;">ID / Type</th>
+                                <th style="padding: 1rem; text-align: left; font-weight: 600;">Description</th>
+                                <th style="padding: 1rem; text-align: left; font-weight: 600;">User / Amount</th>
+                                <th style="padding: 1rem; text-align: left; font-weight: 600;">Method</th>
                                 <th style="padding: 1rem; text-align: left; font-weight: 600;">Status</th>
                                 <th style="padding: 1rem; text-align: left; font-weight: 600;">Time</th>
                                 <th style="padding: 1rem; text-align: left; font-weight: 600;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="transactions-tbody">
-                            <!-- Sample transactions -->
+                            <!-- Wallet Connection -->
                             <tr style="border-bottom: 1px solid var(--border-color);">
-                                <td style="padding: 1rem;"><a href="/admin/orders/KB-2024-001"
+                                <td style="padding: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span
+                                            style="background: #8b5cf6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">🔌
+                                            WALLET</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem;">MetaMask connection</td>
+                                <td style="padding: 1rem;">0x1234...5678</td>
+                                <td style="padding: 1rem;">
+                                    <span
+                                        style="background: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">MetaMask</span>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <span
+                                        style="background: #d4edda; color: #155724; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Connected</span>
+                                </td>
+                                <td style="padding: 1rem; color: var(--gray-color); font-size: 0.9rem;">2 min ago</td>
+                                <td style="padding: 1rem;">
+                                    <button onclick="viewWalletConnection('0x1234...5678')"
+                                        style="background: none; border: 1px solid var(--border-color); padding: 0.25rem 0.75rem; border-radius: var(--border-radius); cursor: pointer; font-size: 0.8rem;">View</button>
+                                </td>
+                            </tr>
+
+                            <!-- NFT Access -->
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span
+                                            style="background: #06b6d4; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">🎨
+                                            NFT</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem;">Book access granted</td>
+                                <td style="padding: 1rem;">0x9876...3210</td>
+                                <td style="padding: 1rem;">
+                                    <span
+                                        style="background: #06b6d4; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">NFT</span>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <span
+                                        style="background: #d4edda; color: #155724; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Validated</span>
+                                </td>
+                                <td style="padding: 1rem; color: var(--gray-color); font-size: 0.9rem;">5 min ago</td>
+                                <td style="padding: 1rem;">
+                                    <button onclick="viewNFTAccess('nft-001')"
+                                        style="background: none; border: 1px solid var(--border-color); padding: 0.25rem 0.75rem; border-radius: var(--border-radius); cursor: pointer; font-size: 0.8rem;">View</button>
+                                </td>
+                            </tr>
+
+                            <!-- Reading Session -->
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span
+                                            style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">📚
+                                            READ</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem;">Reading session started</td>
+                                <td style="padding: 1rem;">0x5555...7777</td>
+                                <td style="padding: 1rem;">
+                                    <span
+                                        style="background: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Reader</span>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <span
+                                        style="background: #fff3cd; color: #856404; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Active</span>
+                                </td>
+                                <td style="padding: 1rem; color: var(--gray-color); font-size: 0.9rem;">12 min ago</td>
+                                <td style="padding: 1rem;">
+                                    <button onclick="viewReaderSession('reader-001')"
+                                        style="background: none; border: 1px solid var(--border-color); padding: 0.25rem 0.75rem; border-radius: var(--border-radius); cursor: pointer; font-size: 0.8rem;">View</button>
+                                </td>
+                            </tr>
+
+                            <!-- Traditional Transaction -->
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span
+                                            style="background: #635bff; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">💳
+                                            ORDER</span>
+                                    </div>
+                                    <a href="/admin/orders/KB-2024-001"
                                         style="color: var(--primary-color); text-decoration: none; font-weight: 600;">KB-2024-001</a>
                                 </td>
                                 <td style="padding: 1rem;">Digital Marketing Mastery</td>
@@ -641,7 +789,7 @@
 
         // Global functions for transaction actions
         function viewTransaction(id) {
-            window.open(`/admin/orders/${id}`, '_blank');
+            window.location.href = `/admin/orders/${id}`;
         }
 
         function cancelTransaction(id) {

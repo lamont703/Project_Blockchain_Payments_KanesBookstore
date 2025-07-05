@@ -13,6 +13,222 @@
 
     <!-- External Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://unpkg.com/pdf-js-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://unpkg.com/ethers@6.8.0/dist/ethers.umd.min.js"></script>
+
+    <!-- Additional Styling for Better UX -->
+    <style>
+        .access-explanation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .access-explanation h2 {
+            margin-bottom: 16px;
+            font-size: 1.5rem;
+        }
+
+        .access-explanation p {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+
+        .access-paths {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .access-path {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .access-path:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .access-path.active {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .access-path-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .access-path h3 {
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .access-path p {
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .how-it-works {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .how-it-works h3 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .step {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .step h4 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .step p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .nft-info-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+
+        .nft-info-card h4 {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nft-info-card p {
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .nft-info-card code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .benefit-item {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .benefit-icon {
+            font-size: 1.5rem;
+        }
+
+        .benefit-text {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .section-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #667eea, transparent);
+            margin: 32px 0;
+        }
+
+        @media (max-width: 768px) {
+            .access-paths {
+                grid-template-columns: 1fr;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 
     <!-- GoHighLevel Integration -->
     <script>
@@ -39,6 +255,18 @@
                     <li><a href="/support">Support</a></li>
                     <li><a href="/account">Account</a></li>
                 </ul>
+
+                <!-- Wallet Connection -->
+                <div class="wallet-connection">
+                    <button id="connect-wallet-btn" class="btn btn-wallet" onclick="openWalletModal()">
+                        🔗 Connect Wallet
+                    </button>
+                    <div id="wallet-info" class="wallet-info" style="display: none;">
+                        <span id="wallet-address" class="wallet-address"></span>
+                        <span id="chain-indicator" class="chain-indicator"></span>
+                        <button onclick="disconnectWallet()" class="btn-disconnect">Disconnect</button>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -46,6 +274,16 @@
     <!-- Product Detail Section -->
     <main class="product-detail">
         <div class="container">
+            <!-- Access Explanation Banner -->
+            <div class="access-explanation">
+                <h2>🚀 Revolutionary Book Access System</h2>
+                <p>Experience our new hybrid access model - purchase the book traditionally OR access it instantly for
+                    FREE if you own the right NFT!</p>
+                <p><strong>What's an NFT?</strong> Think of it as a digital membership card that proves you own
+                    something special. If you have one from our premium collection, you can read this book at no extra
+                    cost!</p>
+            </div>
+
             <div class="row">
                 <!-- Product Image -->
                 <div class="col col-12 col-lg-6">
@@ -60,58 +298,170 @@
                         Digital Marketing Mastery
                     </h1>
 
-                    <!-- Pricing Display -->
-                    <div class="pricing-container">
-                        <div class="usd-price" data-product-price>$25.00</div>
-                        <div class="crypto-equivalent">
-                            ≈ 50 Tomlin Coins<br>
-                            <span data-crypto="btc">≈ 0.0008 BTC</span><br>
-                            <span data-crypto="eth">≈ 0.0156 ETH</span><br>
-                            <span data-crypto="usdc">≈ 25.00 USDC</span>
+                    <!-- Access Level Badge -->
+                    <div class="access-level-badge">
+                        <span class="badge premium">Premium Content</span>
+                    </div>
+
+                    <!-- Access Path Selection -->
+                    <div class="access-paths">
+                        <div class="access-path" id="nft-path">
+                            <div class="access-path-icon">🎨</div>
+                            <h3>NFT Holder Access</h3>
+                            <p>Own a qualifying NFT? Read for <strong>FREE</strong>!</p>
+                            <div class="tooltip">
+                                <button class="btn btn-secondary" onclick="selectNFTPath()">
+                                    Check My NFTs
+                                </button>
+                                <span class="tooltiptext">Connect your wallet to check if you own qualifying NFTs</span>
+                            </div>
+                        </div>
+
+                        <div class="access-path" id="purchase-path">
+                            <div class="access-path-icon">💳</div>
+                            <h3>Purchase Access</h3>
+                            <p>Buy the book and get lifetime access</p>
+                            <button class="btn btn-primary" onclick="selectPurchasePath()">
+                                Buy for $25.00
+                            </button>
                         </div>
                     </div>
 
+                    <!-- How It Works Section -->
+                    <div class="how-it-works">
+                        <h3>📚 How Our System Works</h3>
+                        <div class="steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <h4>Choose Your Path</h4>
+                                <p>Select NFT access (if you have qualifying NFTs) or purchase directly</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <h4>Verify Access</h4>
+                                <p>Connect wallet for NFT verification or complete payment</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <h4>Start Reading</h4>
+                                <p>Access our premium online reader with your content</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NFT Access Section (Hidden by default) -->
+                    <div id="nft-access-section" style="display: none;">
+                        <div class="nft-info-card">
+                            <h4>🎨 NFT Access Requirements</h4>
+                            <p><strong>Required Collection:</strong> Kane's Premium Collection</p>
+                            <p><strong>Contract Address:</strong> <code>0x742d35Cc6634C0532925a3b8D1c6F0de</code></p>
+                            <p><strong>Network:</strong> Ethereum Mainnet</p>
+                            <p>💡 Own any NFT from this collection to unlock free access!</p>
+                        </div>
+
+                        <div class="nft-validation" id="nft-validation">
+                            <button id="check-nfts-btn" onclick="checkNFTAccess()" class="btn btn-check-nfts" disabled>
+                                🔗 Connect Wallet to Check NFTs
+                            </button>
+                            <div id="nft-status" class="nft-status">
+                                Connect your wallet to check NFT access
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purchase Section (Hidden by default) -->
+                    <div id="purchase-section" style="display: none;">
+                        <!-- Pricing Display -->
+                        <div class="pricing-container">
+                            <div class="usd-price" data-product-price>$25.00</div>
+                            <div class="crypto-equivalent">
+                                <strong>Crypto Options:</strong><br>
+                                <span data-crypto="btc">≈ 0.0008 BTC</span><br>
+                                <span data-crypto="eth">≈ 0.0156 ETH</span><br>
+                                <span data-crypto="usdc">≈ 25.00 USDC</span>
+                            </div>
+                        </div>
+
+                        <!-- Payment Buttons -->
+                        <div class="payment-buttons">
+                            <button class="btn btn-primary btn-block btn-lg" data-action="stripe-payment"
+                                data-product-id="digital-marketing-mastery"
+                                data-product-title="Digital Marketing Mastery" data-product-price="25.00"
+                                data-product-image="https://via.placeholder.com/800x600/4fc3f7/white?text=Digital+Marketing+Mastery"
+                                data-product-description="Transform your business with our comprehensive digital marketing guide.">
+                                💳 Buy with Credit Card ($25.00)
+                            </button>
+
+                            <button class="btn btn-secondary btn-block btn-lg" data-action="show-payment-modal">
+                                ₿ Pay with Cryptocurrency
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Success Section (Hidden by default) -->
+                    <div id="success-section" style="display: none;">
+                        <div class="alert alert-success"
+                            style="background: #d4edda; color: #155724; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                            <h4>✅ Access Granted!</h4>
+                            <p id="access-message">You now have full access to this book.</p>
+                        </div>
+
+                        <button id="btn-read-now" class="btn btn-success btn-block btn-lg" onclick="openEbookReader()">
+                            📖 Start Reading Now
+                        </button>
+                    </div>
+
+                    <hr class="section-divider">
+
                     <!-- Product Description -->
                     <div class="product-description" data-product-description>
+                        <h3>📖 About This Book</h3>
                         <p>Transform your business with our comprehensive digital marketing guide. This expertly crafted
                             resource covers everything from social media strategy to conversion optimization.</p>
 
                         <p>Perfect for entrepreneurs, marketers, and business owners looking to master the digital
                             landscape and drive real results.</p>
 
-                        <p><strong>What's Included:</strong></p>
-                        <ul>
-                            <li>200+ page comprehensive guide</li>
-                            <li>Step-by-step implementation strategies</li>
-                            <li>Real-world case studies</li>
-                            <li>Bonus templates and worksheets</li>
-                            <li>Exclusive community access</li>
-                        </ul>
-                    </div>
-
-                    <!-- Payment Buttons -->
-                    <div class="payment-buttons">
-                        <button class="btn btn-primary btn-block btn-lg" data-action="stripe-payment"
-                            data-product-id="digital-marketing-mastery" data-product-title="Digital Marketing Mastery"
-                            data-product-price="25.00"
-                            data-product-image="https://via.placeholder.com/800x600/4fc3f7/white?text=Digital+Marketing+Mastery"
-                            data-product-description="Transform your business with our comprehensive digital marketing guide.">
-                            💳 Buy with Card ($25.00)
-                        </button>
-
-                        <button class="btn btn-secondary btn-block btn-lg" data-action="show-payment-modal">
-                            ₿ Choose Payment Method
-                        </button>
+                        <div class="benefits-grid">
+                            <div class="benefit-item">
+                                <div class="benefit-icon">📚</div>
+                                <div class="benefit-text">200+ page comprehensive guide</div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">🎯</div>
+                                <div class="benefit-text">Step-by-step strategies</div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">💼</div>
+                                <div class="benefit-text">Real-world case studies</div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">📋</div>
+                                <div class="benefit-text">Bonus templates & worksheets</div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">👥</div>
+                                <div class="benefit-text">Exclusive community access</div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">📖</div>
+                                <div class="benefit-text">Online reader access</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Product Features -->
                     <div class="product-features">
+                        <h3>🎁 What You Get</h3>
                         <ul>
-                            <li>Instant download after purchase</li>
-                            <li>30-day money-back guarantee</li>
-                            <li>NFT certificate of ownership included</li>
-                            <li>Lifetime access to updates</li>
-                            <li>Priority customer support</li>
+                            <li>✅ Instant access after verification/purchase</li>
+                            <li>✅ 30-day money-back guarantee (for purchases)</li>
+                            <li>✅ NFT certificate of ownership included</li>
+                            <li>✅ Lifetime access to updates</li>
+                            <li>✅ Priority customer support</li>
+                            <li>✅ Advanced online ebook reader</li>
+                            <li>✅ Cross-device reading progress sync</li>
+                            <li>✅ Download capabilities (after purchase)</li>
                         </ul>
                     </div>
 
@@ -130,8 +480,16 @@
                             <span>Crypto Payments</span>
                         </div>
                         <div class="security-badge">
+                            <span>🔗</span>
+                            <span>Web3 Compatible</span>
+                        </div>
+                        <div class="security-badge">
                             <span>🛡️</span>
-                            <span>Money Back Guarantee</span>
+                            <span>NFT Verified</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>📖</span>
+                            <span>Premium Reader</span>
                         </div>
                     </div>
                 </div>
@@ -286,8 +644,286 @@
         </div>
     </div>
 
+    <!-- Wallet Connection Modal -->
+    <div id="wallet-connection-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Connect Wallet</h2>
+                <button class="modal-close" onclick="closeWalletModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Wallet Selection State -->
+                <div id="wallet-selection" class="wallet-selection">
+                    <h3>Choose Your Wallet</h3>
+
+                    <div class="wallet-options">
+                        <div class="wallet-option" onclick="connectMetaMask()">
+                            <div class="wallet-icon">🦊</div>
+                            <div class="wallet-info">
+                                <div class="wallet-name">MetaMask</div>
+                                <div class="wallet-description">Most popular Ethereum wallet</div>
+                            </div>
+                            <div id="metamask-badge" class="installed-badge" style="display: none;">Installed</div>
+                        </div>
+
+                        <div class="wallet-option" onclick="connectWalletConnect()">
+                            <div class="wallet-icon">🔗</div>
+                            <div class="wallet-info">
+                                <div class="wallet-name">WalletConnect</div>
+                                <div class="wallet-description">Connect with QR code</div>
+                            </div>
+                        </div>
+
+                        <div class="wallet-option" onclick="connectCoinbase()">
+                            <div class="wallet-icon">🔵</div>
+                            <div class="wallet-info">
+                                <div class="wallet-name">Coinbase Wallet</div>
+                                <div class="wallet-description">Secure and easy to use</div>
+                            </div>
+                        </div>
+
+                        <div class="wallet-option" onclick="connectTrustWallet()">
+                            <div class="wallet-icon">🛡️</div>
+                            <div class="wallet-info">
+                                <div class="wallet-name">Trust Wallet</div>
+                                <div class="wallet-description">Mobile-first wallet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="security-notice">
+                        <p>🔒 Your wallet will be securely connected using cryptographic signatures</p>
+                    </div>
+                </div>
+
+                <!-- Connection Loading State -->
+                <div id="connection-loading" class="connection-loading" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <h3>Connecting to <span id="connecting-wallet-name"></span></h3>
+                    <p>Please approve the connection request in your wallet</p>
+                    <button class="btn btn-secondary" onclick="cancelConnection()">Cancel Connection</button>
+                </div>
+
+                <!-- Signature Request State -->
+                <div id="signature-request" class="signature-request" style="display: none;">
+                    <div class="signature-icon">🔏</div>
+                    <h3>Sign Message</h3>
+                    <p>Please sign this message to authenticate your wallet</p>
+
+                    <div class="signature-message">
+                        <pre id="signature-message-text"></pre>
+                    </div>
+
+                    <div class="signature-notice">
+                        <p>This signature is required for security and will not cost any gas</p>
+                    </div>
+                </div>
+
+                <!-- Connection Success State -->
+                <div id="connection-success" class="connection-success" style="display: none;">
+                    <div class="success-icon">✅</div>
+                    <h3>Connected!</h3>
+
+                    <div class="connection-details">
+                        <p>Wallet: <span id="connected-address"></span></p>
+                        <p>Network: <span id="connected-network"></span></p>
+                    </div>
+
+                    <p>You can now access NFT-gated content and make crypto payments</p>
+
+                    <button class="btn btn-primary" onclick="continueToBook()">Continue to Book</button>
+                </div>
+
+                <!-- Error State -->
+                <div id="connection-error" class="connection-error" style="display: none;">
+                    <div class="error-icon">❌</div>
+                    <div class="error-message" id="error-message-text"></div>
+
+                    <div class="error-actions">
+                        <button class="btn btn-secondary" onclick="retryConnection()">Try Again</button>
+                        <button class="btn btn-primary" onclick="showWalletSelection()">Choose Different Wallet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="assets/js/kanes-bookstore.js"></script>
+
+    <!-- Enhanced JavaScript for better UX -->
+    <script>
+        // Track current access path
+        let currentPath = null;
+
+        // Select NFT path
+        function selectNFTPath() {
+            currentPath = 'nft';
+            document.getElementById('nft-path').classList.add('active');
+            document.getElementById('purchase-path').classList.remove('active');
+            document.getElementById('nft-access-section').style.display = 'block';
+            document.getElementById('purchase-section').style.display = 'none';
+
+            // Enable wallet connection
+            document.getElementById('check-nfts-btn').disabled = false;
+            document.getElementById('check-nfts-btn').innerHTML = '🔗 Connect Wallet to Check NFTs';
+
+            // Analytics
+            gtag('event', 'select_access_path', {
+                access_path: 'nft',
+                product_id: 'digital-marketing-mastery'
+            });
+        }
+
+        // Select purchase path
+        function selectPurchasePath() {
+            currentPath = 'purchase';
+            document.getElementById('purchase-path').classList.add('active');
+            document.getElementById('nft-path').classList.remove('active');
+            document.getElementById('purchase-section').style.display = 'block';
+            document.getElementById('nft-access-section').style.display = 'none';
+
+            // Analytics
+            gtag('event', 'select_access_path', {
+                access_path: 'purchase',
+                product_id: 'digital-marketing-mastery'
+            });
+        }
+
+        // Enhanced NFT Access Check
+        async function checkNFTAccess() {
+            const button = document.getElementById('check-nfts-btn');
+            const status = document.getElementById('nft-status');
+
+            // First check if wallet is connected
+            if (!window.ethereum || !window.ethereum.selectedAddress) {
+                openWalletModal();
+                return;
+            }
+
+            try {
+                button.disabled = true;
+                button.innerHTML = '🔄 Checking NFTs...';
+                status.innerHTML = 'Scanning your wallet for qualifying NFTs...';
+
+                // Mock NFT check (replace with actual implementation)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Simulate NFT found (for demo purposes)
+                const hasNFT = Math.random() > 0.5; // 50% chance for demo
+
+                if (hasNFT) {
+                    status.innerHTML = '✅ NFT Found! You have access to this book.';
+                    document.getElementById('success-section').style.display = 'block';
+                    document.getElementById('access-message').innerHTML = 'Your NFT grants you free access to this book!';
+
+                    // Analytics
+                    gtag('event', 'nft_access_granted', {
+                        product_id: 'digital-marketing-mastery',
+                        wallet_address: window.ethereum.selectedAddress
+                    });
+                } else {
+                    status.innerHTML = '❌ No qualifying NFTs found in your wallet.';
+                    button.innerHTML = '🔄 Check Again';
+                    button.disabled = false;
+
+                    // Show purchase option
+                    setTimeout(() => {
+                        if (confirm('No qualifying NFTs found. Would you like to purchase the book instead?')) {
+                            selectPurchasePath();
+                        }
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error checking NFT access:', error);
+                status.innerHTML = '❌ Error checking NFTs. Please try again.';
+                button.innerHTML = '🔄 Try Again';
+                button.disabled = false;
+            }
+        }
+
+        // Open ebook reader
+        function openEbookReader() {
+            // Analytics
+            gtag('event', 'open_ebook_reader', {
+                product_id: 'digital-marketing-mastery',
+                access_type: currentPath
+            });
+
+            window.location.href = '05-ebook-reader.html';
+        }
+
+        // Initialize page with enhanced flow detection
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if user is coming from a specific flow
+            const urlParams = new URLSearchParams(window.location.search);
+            const accessType = urlParams.get('access');
+            const source = urlParams.get('source');
+
+            // Handle returning users with contextual messaging
+            if (source === 'reader') {
+                showReturningUserMessage('Welcome back! Continue where you left off or explore more books.');
+            } else if (source === 'confirmation') {
+                showReturningUserMessage('Want to purchase additional books? Check out our collection!');
+            }
+
+            // Auto-select path based on URL parameters
+            if (accessType === 'nft') {
+                selectNFTPath();
+            } else if (accessType === 'purchase') {
+                selectPurchasePath();
+            }
+
+            // Check if wallet is already connected
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                document.getElementById('check-nfts-btn').disabled = false;
+                document.getElementById('check-nfts-btn').innerHTML = '🔍 Check My NFTs';
+            }
+        });
+
+        function showReturningUserMessage(message) {
+            const messageBar = document.createElement('div');
+            messageBar.style.cssText = `
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                padding: 1rem;
+                text-align: center;
+                font-weight: 600;
+                position: relative;
+                overflow: hidden;
+                margin-bottom: 1rem;
+                border-radius: 8px;
+            `;
+            messageBar.innerHTML = `
+                <div style="position: relative; z-index: 1;">
+                    <span style="margin-right: 0.5rem;">👋</span>
+                    ${message}
+                    <button onclick="this.parentElement.parentElement.remove()" style="
+                        background: none;
+                        border: none;
+                        color: white;
+                        margin-left: 1rem;
+                        cursor: pointer;
+                        opacity: 0.8;
+                        font-size: 1.2rem;
+                    ">×</button>
+                </div>
+            `;
+
+            const container = document.querySelector('.container');
+            if (container) {
+                container.insertBefore(messageBar, container.firstChild);
+            }
+
+            // Auto-hide after 6 seconds
+            setTimeout(() => {
+                if (messageBar.parentElement) {
+                    messageBar.remove();
+                }
+            }, 6000);
+        }
+    </script>
 
     <!-- Analytics -->
     <script>

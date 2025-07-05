@@ -2,7 +2,7 @@
 
 ## 🎯 Screen Overview
 
-The Admin Dashboard provides comprehensive management and analytics for Kane's Bookstore's dual payment system, allowing administrators to monitor both Stripe and crypto transactions, manage orders, and track business metrics.
+**Updated Version 2.0** - The Admin Dashboard now provides comprehensive management and analytics for Kane's Bookstore's hybrid Web2/Web3 ecosystem, including traditional payment processing, crypto transactions, wallet connections, NFT validation, and ebook reader analytics.
 
 ## 📱 Dashboard Layout
 
@@ -21,30 +21,39 @@ The Admin Dashboard provides comprehensive management and analytics for Kane's B
 │ │ +12% ↗       │ +8% ↗        │ +10% ↗       │ +25% ↗ │ │
 │ └──────────────┴──────────────┴──────────────┴────────┘ │
 ├─────────────────────────────────────────────────────────┤
+│ 🔗 Web3 Analytics                                       │
+│ ┌──────────────┬──────────────┬──────────────┬────────┐ │
+│ │ 🔗 Wallets   │ 🛡️ NFT Valid │ 📖 Readers   │ 🎯 Conv│ │
+│ │ 89 connected │ 67 granted   │ 45 active    │ 23.4% │ │
+│ │ +15% ↗       │ +8% ↗        │ +12% ↗       │ +2.1% ↗│ │
+│ └──────────────┴──────────────┴──────────────┴────────┘ │
+├─────────────────────────────────────────────────────────┤
 │ 📈 Quick Stats                                          │
 │ ┌──────────────┬──────────────┬──────────────┬────────┐ │
 │ │ 🛒 Orders    │ 💎 NFTs      │ 📧 Emails    │ 👥 Users│ │
 │ │ 42 today     │ 38 issued    │ 42 sent      │ 156 new│ │
 │ └──────────────┴──────────────┴──────────────┴────────┘ │
 ├─────────────────────────────────────────────────────────┤
-│ 📋 Recent Transactions                          [🔍 All] │
+│ 📋 Recent Activity                              [🔍 All] │
 │ ┌─────────────────────────────────────────────────────┐ │
-│ │ ID | Product | Amount | Method | Status | Time      │ │
-│ │ KB-001 | Marketing | $25 | Stripe | ✅ | 2:30 PM  │ │
-│ │ KB-002 | SEO Guide | $30 | BTC    | ✅ | 2:15 PM  │ │
-│ │ KB-003 | Social    | $20 | ETH    | ⏳ | 2:00 PM  │ │
-│ │ KB-004 | Analytics | $35 | Stripe | ✅ | 1:45 PM  │ │
+│ │ Activity | User | Method | Status | Time             │ │
+│ │ Purchase | 0x123... | Stripe | ✅ | 2:30 PM         │ │
+│ │ NFT Access | 0x456... | Premium | ✅ | 2:15 PM      │ │
+│ │ Wallet Connect | 0x789... | MetaMask | ✅ | 2:00 PM  │ │
+│ │ Reading Session | 0xabc... | Chapter 5 | 🔄 | 1:45 PM│ │
 │ └─────────────────────────────────────────────────────┘ │
 ├─────────────────────────────────────────────────────────┤
 │ 🔧 Management Tools                                     │
 │ [💳 Stripe Dashboard] [₿ Crypto Dashboard] [📧 Emails]  │
-│ [🎁 NFT Manager] [⚙️ Settings] [📊 Analytics]          │
+│ [🔗 Wallet Analytics] [🎁 NFT Manager] [📖 Reader Stats]│
+│ [⚙️ Settings] [📊 Analytics] [🛡️ Security]            │
 ├─────────────────────────────────────────────────────────┤
-│ 📊 Revenue Chart (Last 30 Days)                        │
+│ 📊 Revenue & Access Chart (Last 30 Days)               │
 │ ┌─────────────────────────────────────────────────────┐ │
-│ │     ▄▄▄     ▄▄▄▄▄▄    Stripe: $15,420             │ │
-│ │   ▄▄   ▄▄ ▄▄      ▄▄  Crypto: $8,940              │ │
-│ │ ▄▄       ▄▄          ▄ Total: $24,360              │ │
+│ │     ▄▄▄     ▄▄▄▄▄▄    💳 Stripe: $15,420          │ │
+│ │   ▄▄   ▄▄ ▄▄      ▄▄  ₿ Crypto: $8,940           │ │
+│ │ ▄▄       ▄▄          ▄ 🔗 NFT Access: 1,234       │ │
+│ │                       📖 Read Sessions: 2,567      │ │
 │ └─────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -197,6 +206,362 @@ The Admin Dashboard provides comprehensive management and analytics for Kane's B
 .status-badge.pending {
   background: #fff3cd;
   color: #856404;
+}
+
+.status-badge.active {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+```
+
+### Web3 Analytics Components
+
+```css
+.web3-analytics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.web3-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid;
+}
+
+.web3-card.wallets {
+  border-left-color: #8b5cf6;
+}
+
+.web3-card.nft-validation {
+  border-left-color: #10b981;
+}
+
+.web3-card.readers {
+  border-left-color: #3b82f6;
+}
+
+.web3-card.conversion {
+  border-left-color: #f59e0b;
+}
+
+.web3-metric {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a202c;
+  margin-bottom: 8px;
+}
+
+.web3-label {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.web3-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.web3-change.positive {
+  color: #10b981;
+}
+
+.web3-change.negative {
+  color: #ef4444;
+}
+```
+
+### Wallet Analytics Table
+
+```css
+.wallet-analytics {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.wallet-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.wallet-table th {
+  background: #f7fafc;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.wallet-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+}
+
+.wallet-address {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.wallet-type-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.wallet-type-badge.metamask {
+  background: #f97316;
+  color: white;
+}
+
+.wallet-type-badge.walletconnect {
+  background: #3b82f6;
+  color: white;
+}
+
+.wallet-type-badge.coinbase {
+  background: #1d4ed8;
+  color: white;
+}
+
+.chain-badge {
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.chain-badge.ethereum {
+  background: #6b7280;
+  color: white;
+}
+
+.chain-badge.polygon {
+  background: #8b5cf6;
+  color: white;
+}
+
+.chain-badge.bsc {
+  background: #f59e0b;
+  color: white;
+}
+```
+
+### NFT Validation Components
+
+```css
+.nft-validation-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nft-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.nft-stat-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.nft-stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 4px;
+}
+
+.nft-stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nft-collection-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.nft-collection-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.collection-info {
+  flex: 1;
+}
+
+.collection-name {
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 4px;
+}
+
+.collection-address {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.collection-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.collection-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+```
+
+### Reading Analytics
+
+```css
+.reading-analytics {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.reading-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.reading-metric {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.reading-metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 4px;
+}
+
+.reading-metric-label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.active-readers {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.reader-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.reader-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reader-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.reader-details {
+  font-size: 14px;
+}
+
+.reader-wallet {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.reader-book {
+  font-weight: 500;
+  color: #1a202c;
+}
+
+.reader-progress {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.reader-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-indicator.active {
+  background: #10b981;
+}
+
+.status-indicator.idle {
+  background: #f59e0b;
+}
+
+.status-indicator.offline {
+  background: #6b7280;
 }
 
 .status-badge.failed {

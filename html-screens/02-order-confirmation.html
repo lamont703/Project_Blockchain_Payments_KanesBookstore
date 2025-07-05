@@ -4,18 +4,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation - Kane's Bookstore</title>
+    <title>Access Confirmed - Kane's Bookstore</title>
     <meta name="description"
-        content="Your order has been confirmed! Download your digital products and access your NFT certificate.">
+        content="Your access has been confirmed! Start reading your digital content or access your NFT-gated books.">
 
     <!-- Kane's Bookstore Styles -->
     <link rel="stylesheet" href="assets/css/kanes-bookstore.css">
 
     <!-- Prevent indexing of confirmation pages -->
     <meta name="robots" content="noindex, nofollow">
+
+    <!-- Additional styles for enhanced flow -->
+    <style>
+        .access-type-indicator {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .access-type-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .contextual-message {
+            background: #f0f9ff;
+            border: 2px solid #bae6fd;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .contextual-message.nft-access {
+            background: linear-gradient(135deg, #fdf4ff 0%, #f3e8ff 100%);
+            border-color: #c084fc;
+        }
+
+        .contextual-message.purchase-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: #86efac;
+        }
+
+        .contextual-message h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .contextual-message p {
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .quick-action {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-action:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+        }
+
+        .quick-action.primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .quick-action.primary:hover {
+            border-color: #1d4ed8;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+        }
+
+        .quick-action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .quick-action h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-action p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .quick-action-btn {
+            background: #f3f4f6;
+            color: #1f2937;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .quick-action.primary .quick-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .quick-action-btn:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .quick-action.primary .quick-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .flow-progress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            gap: 1rem;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .progress-step.completed {
+            background: #10b981;
+            color: white;
+        }
+
+        .progress-step.current {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .progress-arrow {
+            color: #d1d5db;
+            font-size: 1.2rem;
+        }
+
+        .user-guidance {
+            background: #fffbeb;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .user-guidance h4 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-guidance p {
+            color: #b45309;
+            margin: 0;
+        }
+
+        .reading-recommendations {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .reading-recommendations h4 {
+            color: #1f2937;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .recommendation-item {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .recommendation-item h5 {
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .recommendation-item p {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-progress {
+                flex-wrap: wrap;
+            }
+
+            .progress-step {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Access Type Indicator -->
+    <div id="access-type-indicator" class="access-type-indicator">
+        <div id="access-type-text">🎉 Access Confirmed!</div>
+    </div>
+
     <!-- Header -->
     <header class="kb-header">
         <div class="container">
@@ -26,24 +278,106 @@
                     <li><a href="/account">My Account</a></li>
                     <li><a href="/support">Support</a></li>
                 </ul>
+                <div class="wallet-connection">
+                    <div id="wallet-status" class="wallet-info" style="display: none;">
+                        <span class="wallet-indicator">
+                            🔒 <span id="connected-wallet"></span>
+                        </span>
+                    </div>
+                    <button id="connect-wallet-btn" class="btn btn-primary" onclick="openWalletModal()">
+                        Connect Wallet
+                    </button>
+                </div>
             </nav>
         </div>
     </header>
+
+    <!-- Flow Progress -->
+    <div class="container">
+        <div class="flow-progress">
+            <div class="progress-step completed">
+                <span>✓</span>
+                <span>Selected Access</span>
+            </div>
+            <div class="progress-arrow">→</div>
+            <div class="progress-step completed">
+                <span>✓</span>
+                <span id="verification-step">Verified</span>
+            </div>
+            <div class="progress-arrow">→</div>
+            <div class="progress-step current">
+                <span>📚</span>
+                <span>Ready to Read</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Success Header -->
     <section class="success-header">
         <div class="container">
             <div class="success-icon">🎉</div>
-            <h1 class="success-title">Payment Successful!</h1>
-            <p class="success-subtitle">Thank you for your purchase. Your order has been confirmed.</p>
+            <h1 class="success-title" id="success-title">Access Confirmed!</h1>
+            <p class="success-subtitle" id="success-subtitle">You now have full access to your digital content.</p>
         </div>
     </section>
 
     <!-- Main Content -->
     <main class="container" style="padding: 2rem 0;">
 
-        <!-- Order Details -->
-        <section class="order-details">
+        <!-- Contextual Message -->
+        <div id="contextual-message" class="contextual-message">
+            <h3 id="contextual-title">Welcome to Your Digital Library</h3>
+            <p id="contextual-description">Your access has been confirmed and you can now start reading.</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="quick-action primary">
+                <div class="quick-action-icon">📖</div>
+                <h4>Start Reading Now</h4>
+                <p>Jump directly into your book with our premium reader</p>
+                <button class="quick-action-btn" onclick="startReading()">
+                    Open Reader
+                </button>
+            </div>
+
+            <div class="quick-action" id="download-action" style="display: none;">
+                <div class="quick-action-icon">📥</div>
+                <h4>Download Your Book</h4>
+                <p>Get a permanent copy for offline reading</p>
+                <button class="quick-action-btn" onclick="downloadBook()">
+                    Download PDF
+                </button>
+            </div>
+
+            <div class="quick-action" id="nft-action" style="display: none;">
+                <div class="quick-action-icon">🎁</div>
+                <h4>NFT Certificate</h4>
+                <p>Download your digital ownership certificate</p>
+                <button class="quick-action-btn" onclick="downloadNFT()">
+                    Get Certificate
+                </button>
+            </div>
+
+            <div class="quick-action">
+                <div class="quick-action-icon">🏠</div>
+                <h4>Continue Shopping</h4>
+                <p>Explore more books in our collection</p>
+                <button class="quick-action-btn" onclick="continueShopping()">
+                    Browse Books
+                </button>
+            </div>
+        </div>
+
+        <!-- User Guidance -->
+        <div class="user-guidance">
+            <h4>💡 What's Next?</h4>
+            <p id="guidance-text">Click "Start Reading Now" to begin reading, or explore our other books while you're
+                here!</p>
+        </div>
+
+        <!-- Order Details (for purchases) -->
+        <section class="order-details" id="order-details-section" style="display: none;">
             <div class="order-header">
                 <div>
                     <div class="order-number" id="order-number">Order #KB-2024-001</div>
@@ -77,268 +411,302 @@
             </div>
         </section>
 
-        <!-- Downloads Section -->
-        <section class="downloads-section">
-            <div class="downloads-header">
-                <span style="font-size: 2rem;">⬇️</span>
-                <h2 class="downloads-title">Your Downloads</h2>
-            </div>
-
-            <div class="download-buttons">
-                <a href="#" class="download-btn" id="product-download" data-download-type="product">
-                    <span>📥</span>
-                    <span>Download Your Book</span>
-                </a>
-
-                <a href="#" class="download-btn nft" id="nft-download" data-download-type="nft">
-                    <span>🎁</span>
-                    <span>Download NFT Certificate</span>
-                </a>
-            </div>
-
-            <!-- Additional Access -->
-            <div class="additional-access">
-                <h4>🔗 Additional Access</h4>
-                <ul>
-                    <li><a href="/bonus-materials" id="bonus-link">Bonus materials portal</a></li>
-                    <li><a href="/community" id="community-link">Exclusive community access</a></li>
-                    <li><a href="/support?priority=true" id="support-link">Priority customer support</a></li>
-                </ul>
+        <!-- NFT Access Details (for NFT holders) -->
+        <section class="nft-access-details" id="nft-access-section" style="display: none;">
+            <div
+                style="background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%); color: white; padding: 2rem; border-radius: 12px; margin: 2rem 0;">
+                <h4>🎨 NFT Access Verified</h4>
+                <div style="margin-top: 1rem;">
+                    <p><strong>Verified Collection:</strong> <span id="nft-collection">Kane's Premium Collection</span>
+                    </p>
+                    <p><strong>Wallet Address:</strong> <span id="nft-wallet">0x742d35Cc6634C0532925a3b8D1c6F0de</span>
+                    </p>
+                    <p><strong>NFT Token ID:</strong> <span id="nft-token-id">#1234</span></p>
+                    <p><strong>Access Level:</strong> <span id="access-level">Premium</span></p>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <p style="opacity: 0.9; margin: 0;">🌟 Your NFT grants you free access to this premium content!</p>
+                </div>
             </div>
         </section>
 
-        <!-- What's Next Section -->
-        <section style="margin: 3rem 0;">
-            <h3 style="text-align: center; margin-bottom: 2rem;">📱 What's Next?</h3>
-
-            <div class="next-steps">
-                <a href="/products" class="btn btn-outline btn-block">
-                    🏠 Continue Shopping
-                </a>
-
-                <a href="/account" class="btn btn-outline btn-block">
-                    👤 View My Account
-                </a>
-
-                <a href="/support" class="btn btn-outline btn-block">
-                    📞 Contact Support
-                </a>
+        <!-- Reading Recommendations -->
+        <div class="reading-recommendations">
+            <h4>📚 Recommended Next Steps</h4>
+            <div class="recommendation-grid" id="recommendations-grid">
+                <!-- Recommendations will be populated by JavaScript -->
             </div>
-        </section>
+        </div>
 
         <!-- Security Notice -->
         <section
             style="background: var(--light-gray); padding: 2rem; border-radius: var(--border-radius-lg); text-align: center; margin: 2rem 0;">
-            <h4>🔒 Transaction Security</h4>
-            <p style="margin-bottom: 0.5rem;">Your payment was processed securely through our encrypted payment system.
-            </p>
+            <h4>🔒 Secure Access</h4>
+            <p style="margin-bottom: 0.5rem;">Your access has been securely verified and encrypted.</p>
             <p style="font-size: 0.9rem; color: var(--gray-color); margin: 0;">
-                Transaction ID: <span id="full-transaction-id" style="font-family: monospace;">...</span>
+                Session ID: <span id="session-id" style="font-family: monospace;">...</span>
             </p>
-        </section>
-
-        <!-- Social Sharing (Optional) -->
-        <section style="text-align: center; margin: 3rem 0;">
-            <h4>📢 Share Your Purchase</h4>
-            <p style="color: var(--gray-color); margin-bottom: 1rem;">Let others know about this amazing resource!</p>
-
-            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                <a href="#" class="btn btn-outline" id="share-twitter"
-                    style="background: #1da1f2; color: white; border-color: #1da1f2;">
-                    🐦 Share on Twitter
-                </a>
-                <a href="#" class="btn btn-outline" id="share-facebook"
-                    style="background: #1877f2; color: white; border-color: #1877f2;">
-                    📘 Share on Facebook
-                </a>
-                <a href="#" class="btn btn-outline" id="share-linkedin"
-                    style="background: #0a66c2; color: white; border-color: #0a66c2;">
-                    💼 Share on LinkedIn
-                </a>
-            </div>
         </section>
     </main>
 
     <!-- JavaScript -->
-    <script src="assets/js/kanes-bookstore.js"></script>
-
     <script>
-        // Order Confirmation Page Logic
-        class OrderConfirmation {
-            constructor() {
-                this.orderId = this.getUrlParameter('order_id') || this.getUrlParameter('session_id');
-                this.paymentId = this.getUrlParameter('payment_id');
-                this.init();
-            }
+        // Detect access type from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const accessType = urlParams.get('access') || 'purchase';
+        const source = urlParams.get('source') || 'direct';
+        const walletAddress = urlParams.get('wallet');
+        const nftTokenId = urlParams.get('nft_token');
 
-            init() {
-                this.loadOrderData();
-                this.setupDownloadTracking();
-                this.setupSocialSharing();
-                this.trackPurchaseCompletion();
-            }
+        // Initialize page based on access type
+        document.addEventListener('DOMContentLoaded', function () {
+            initializePageFlow();
+            setupRecommendations();
+            generateSessionId();
+        });
 
-            getUrlParameter(name) {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get(name);
-            }
+        function initializePageFlow() {
+            const indicator = document.getElementById('access-type-indicator');
+            const indicatorText = document.getElementById('access-type-text');
+            const contextualMessage = document.getElementById('contextual-message');
+            const contextualTitle = document.getElementById('contextual-title');
+            const contextualDescription = document.getElementById('contextual-description');
+            const successTitle = document.getElementById('success-title');
+            const successSubtitle = document.getElementById('success-subtitle');
+            const verificationStep = document.getElementById('verification-step');
+            const guidanceText = document.getElementById('guidance-text');
 
-            async loadOrderData() {
-                try {
-                    const orderId = this.orderId || this.paymentId;
-                    if (!orderId) return;
+            if (accessType === 'nft') {
+                // NFT Access Flow
+                indicatorText.textContent = '🎨 NFT Access Verified!';
+                indicator.style.background = 'linear-gradient(135deg, #c084fc 0%, #a855f7 100%)';
 
-                    const response = await fetch(`/api/orders/${orderId}`);
-                    const data = await response.json();
+                contextualMessage.classList.add('nft-access');
+                contextualTitle.textContent = '🎨 Welcome, NFT Holder!';
+                contextualDescription.textContent = 'Your NFT has been verified and grants you free access to this premium content. No payment required!';
 
-                    this.populateOrderDetails(data);
-                    this.setupDownloadLinks(data);
+                successTitle.textContent = 'NFT Access Verified!';
+                successSubtitle.textContent = 'Your digital collectible grants you free access to premium content.';
 
-                } catch (error) {
-                    console.error('Failed to load order data:', error);
+                verificationStep.textContent = 'NFT Verified';
+                guidanceText.textContent = 'Your NFT grants you free access! Click "Start Reading Now" to begin, or browse our collection to see what other NFTs unlock.';
+
+                // Show NFT-specific sections
+                document.getElementById('nft-access-section').style.display = 'block';
+                document.getElementById('nft-action').style.display = 'block';
+
+                // Populate NFT details
+                if (walletAddress) {
+                    document.getElementById('nft-wallet').textContent = walletAddress;
                 }
-            }
-
-            populateOrderDetails(data) {
-                const { order, product, customer } = data;
-
-                // Update order information
-                document.getElementById('order-number').textContent = `Order #${order.id}`;
-                document.getElementById('order-date').textContent = new Date(order.created_at).toLocaleString();
-                document.getElementById('product-name').textContent = product.title;
-                document.getElementById('order-amount').textContent = `$${order.amount}`;
-                document.getElementById('item-price').textContent = `$${order.amount}`;
-                document.getElementById('customer-email').textContent = customer.email;
-                document.getElementById('full-transaction-id').textContent = order.transaction_id;
-
-                // Update payment method display
-                const paymentMethodElement = document.getElementById('payment-method');
-                if (order.payment_method === 'stripe') {
-                    paymentMethodElement.textContent = 'Credit Card (Stripe)';
-                } else if (order.payment_method === 'crypto') {
-                    paymentMethodElement.textContent = `Crypto (${order.payment_currency?.toUpperCase()})`;
+                if (nftTokenId) {
+                    document.getElementById('nft-token-id').textContent = `#${nftTokenId}`;
                 }
 
-                // Update transaction ID display
-                const transactionElement = document.getElementById('transaction-id');
-                if (order.transaction_id) {
-                    const shortId = order.transaction_id.length > 12
-                        ? order.transaction_id.substring(0, 12) + '...'
-                        : order.transaction_id;
-                    transactionElement.textContent = shortId;
-                }
-            }
-
-            setupDownloadLinks(data) {
-                if (!data.download_links) return;
-
-                // Product download
-                const productDownload = document.getElementById('product-download');
-                if (productDownload && data.download_links.product) {
-                    productDownload.href = data.download_links.product;
-                }
-
-                // NFT download
-                const nftDownload = document.getElementById('nft-download');
-                if (nftDownload && data.download_links.nft) {
-                    nftDownload.href = data.download_links.nft;
-                }
-
-                // Additional access links
-                if (data.access_links) {
-                    const bonusLink = document.getElementById('bonus-link');
-                    const communityLink = document.getElementById('community-link');
-                    const supportLink = document.getElementById('support-link');
-
-                    if (bonusLink && data.access_links.bonus_materials) {
-                        bonusLink.href = data.access_links.bonus_materials;
-                    }
-                    if (communityLink && data.access_links.community) {
-                        communityLink.href = data.access_links.community;
-                    }
-                    if (supportLink && data.access_links.support) {
-                        supportLink.href = data.access_links.support;
-                    }
-                }
-            }
-
-            setupDownloadTracking() {
-                // Track download clicks
-                document.querySelectorAll('[data-download-type]').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        const downloadType = e.target.closest('[data-download-type]').dataset.downloadType;
-
-                        // Track download
-                        if (typeof gtag !== 'undefined') {
-                            gtag('event', 'file_download', {
-                                file_type: downloadType,
-                                order_id: this.orderId,
-                                file_name: downloadType === 'product' ? 'digital-marketing-mastery.pdf' : 'nft-certificate.pdf'
-                            });
-                        }
-
-                        console.log(`Download tracked: ${downloadType}`);
-                    });
+                // Analytics
+                gtag('event', 'nft_access_confirmed', {
+                    wallet_address: walletAddress,
+                    nft_token_id: nftTokenId,
+                    collection: 'kanes-premium-collection'
                 });
-            }
 
-            setupSocialSharing() {
-                const productTitle = document.getElementById('product-name').textContent;
-                const shareText = `Just purchased "${productTitle}" from Kane's Bookstore! 📚`;
-                const shareUrl = window.location.origin;
+            } else {
+                // Purchase Flow
+                indicatorText.textContent = '💳 Payment Successful!';
+                indicator.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
 
-                // Twitter
-                const twitterShare = document.getElementById('share-twitter');
-                if (twitterShare) {
-                    twitterShare.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-                }
+                contextualMessage.classList.add('purchase-success');
+                contextualTitle.textContent = '💳 Thank You for Your Purchase!';
+                contextualDescription.textContent = 'Your payment has been processed successfully. You now have lifetime access to your digital content.';
 
-                // Facebook
-                const facebookShare = document.getElementById('share-facebook');
-                if (facebookShare) {
-                    facebookShare.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-                }
+                successTitle.textContent = 'Payment Successful!';
+                successSubtitle.textContent = 'Thank you for your purchase. Your content is ready for download.';
 
-                // LinkedIn
-                const linkedinShare = document.getElementById('share-linkedin');
-                if (linkedinShare) {
-                    linkedinShare.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
-                }
-            }
+                verificationStep.textContent = 'Payment Verified';
+                guidanceText.textContent = 'Your payment is complete! Start reading now, or download your book for offline access.';
 
-            trackPurchaseCompletion() {
-                // Google Analytics 4
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'purchase', {
-                        transaction_id: this.orderId,
-                        value: 25.00,
-                        currency: 'USD',
-                        items: [{
-                            item_id: 'digital-marketing-mastery',
-                            item_name: 'Digital Marketing Mastery',
-                            category: 'Digital Products',
-                            quantity: 1,
-                            price: 25.00
-                        }]
-                    });
-                }
+                // Show purchase-specific sections
+                document.getElementById('order-details-section').style.display = 'block';
+                document.getElementById('download-action').style.display = 'block';
+                document.getElementById('nft-action').style.display = 'block';
 
-                // Facebook Pixel
-                if (typeof fbq !== 'undefined') {
-                    fbq('track', 'Purchase', {
-                        value: 25.00,
-                        currency: 'USD',
-                        content_ids: ['digital-marketing-mastery'],
-                        content_type: 'product'
-                    });
-                }
+                // Populate order details
+                const orderNumber = `KB-${Date.now().toString().slice(-6)}`;
+                const orderDate = new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                document.getElementById('order-number').textContent = `Order #${orderNumber}`;
+                document.getElementById('order-date').textContent = orderDate;
+
+                // Analytics
+                gtag('event', 'purchase', {
+                    transaction_id: orderNumber,
+                    value: 25.00,
+                    currency: 'USD',
+                    items: [{
+                        item_id: 'digital-marketing-mastery',
+                        item_name: 'Digital Marketing Mastery',
+                        category: 'Digital Products',
+                        price: 25.00,
+                        quantity: 1
+                    }]
+                });
             }
         }
 
-        // Initialize when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            new OrderConfirmation();
-        });
+        function setupRecommendations() {
+            const grid = document.getElementById('recommendations-grid');
+            let recommendations = [];
+
+            if (accessType === 'nft') {
+                recommendations = [
+                    {
+                        title: '🎨 Explore NFT Collection',
+                        description: 'View all books available with your NFT collection'
+                    },
+                    {
+                        title: '🔗 Connect More Wallets',
+                        description: 'Link additional wallets to access more content'
+                    },
+                    {
+                        title: '📱 Mobile Reading',
+                        description: 'Download our mobile app for on-the-go reading'
+                    },
+                    {
+                        title: '👥 Join Community',
+                        description: 'Connect with other NFT holders in our exclusive community'
+                    }
+                ];
+            } else {
+                recommendations = [
+                    {
+                        title: '📚 Build Your Library',
+                        description: 'Browse our collection and save on bundle deals'
+                    },
+                    {
+                        title: '🎁 Get NFT Benefits',
+                        description: 'Consider purchasing NFTs for free access to future books'
+                    },
+                    {
+                        title: '⭐ Leave a Review',
+                        description: 'Help others discover great content with your feedback'
+                    },
+                    {
+                        title: '📧 Subscribe for Updates',
+                        description: 'Get notified about new releases and special offers'
+                    }
+                ];
+            }
+
+            grid.innerHTML = recommendations.map(rec => `
+                <div class="recommendation-item">
+                    <h5>${rec.title}</h5>
+                    <p>${rec.description}</p>
+                </div>
+            `).join('');
+        }
+
+        function generateSessionId() {
+            const sessionId = 'sess_' + Math.random().toString(36).substr(2, 9);
+            document.getElementById('session-id').textContent = sessionId;
+        }
+
+        // Action functions
+        function startReading() {
+            gtag('event', 'start_reading', {
+                access_type: accessType,
+                source: source
+            });
+
+            const params = new URLSearchParams({
+                access: accessType,
+                source: 'confirmation'
+            });
+
+            if (accessType === 'nft' && walletAddress) {
+                params.append('wallet', walletAddress);
+            }
+
+            window.location.href = `05-ebook-reader.html?${params.toString()}`;
+        }
+
+        function downloadBook() {
+            gtag('event', 'download_book', {
+                access_type: accessType,
+                format: 'pdf'
+            });
+
+            // Simulate download
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = 'digital-marketing-mastery.pdf';
+            link.click();
+
+            showNotification('📥 Download Started', 'Your book is being prepared for download');
+        }
+
+        function downloadNFT() {
+            gtag('event', 'download_nft', {
+                access_type: accessType,
+                wallet_address: walletAddress
+            });
+
+            // Simulate NFT certificate download
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = 'nft-certificate.json';
+            link.click();
+
+            showNotification('🎁 NFT Certificate', 'Your digital ownership certificate is ready');
+        }
+
+        function continueShopping() {
+            gtag('event', 'continue_shopping', {
+                access_type: accessType,
+                source: 'confirmation'
+            });
+
+            window.location.href = 'index.html';
+        }
+
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+                z-index: 1000;
+                font-weight: 600;
+                max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">${title}</div>
+                <div style="opacity: 0.9; font-size: 0.9rem;">${message}</div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Initialize wallet connection if needed
+        if (walletAddress) {
+            document.getElementById('connect-wallet-btn').style.display = 'none';
+            document.getElementById('wallet-status').style.display = 'block';
+            document.getElementById('connected-wallet').textContent = walletAddress.substring(0, 6) + '...' + walletAddress.substring(38);
+        }
     </script>
 </body>
 

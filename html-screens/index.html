@@ -13,6 +13,52 @@
 
     <!-- Additional styles for index page -->
     <style>
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            color: var(--dark-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .wallet-connection {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .hero-section {
             background: linear-gradient(135deg, #4fc3f7 0%, #3182ce 100%);
             color: white;
@@ -296,20 +342,48 @@
 </head>
 
 <body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container">
+            <nav class="header-nav">
+                <a href="/" class="logo">Kane's Bookstore</a>
+
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#demos">Demos</a></li>
+                    <li><a href="#tech">Technology</a></li>
+                    <li><a href="01-product-detail-page.html">Shop</a></li>
+                </ul>
+
+                <div class="wallet-connection">
+                    <div id="wallet-status" class="wallet-info" style="display: none;">
+                        <span class="wallet-indicator">
+                            🔒 <span id="connected-wallet"></span>
+                        </span>
+                    </div>
+                    <button id="connect-wallet-btn" class="btn btn-primary" onclick="openWalletModal()">
+                        Connect Wallet
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
             <h1 class="hero-title">Kane's Bookstore</h1>
             <p class="hero-subtitle">
                 Complete hybrid payment system supporting both traditional payments (Stripe) and cryptocurrency,
-                designed for seamless GoHighLevel integration.
+                with NFT-gated ebook reader access for premium content.
             </p>
 
             <div class="tech-stack">
                 <span class="tech-badge">💳 Stripe Integration</span>
                 <span class="tech-badge">₿ Crypto Payments</span>
-                <span class="tech-badge">📱 Mobile First</span>
-                <span class="tech-badge">🔗 GoHighLevel Ready</span>
+                <span class="tech-badge">🔗 Wallet Connect</span>
+                <span class="tech-badge">🎨 NFT Gated Access</span>
+                <span class="tech-badge">📚 Ebook Reader</span>
                 <span class="tech-badge">⚡ Real-time Analytics</span>
             </div>
         </div>
@@ -369,6 +443,33 @@
                 </div>
 
                 <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3 class="feature-title">Wallet Connection</h3>
+                    <p class="feature-description">
+                        Connect MetaMask, WalletConnect, Coinbase Wallet, and other Web3 wallets for seamless
+                        cryptocurrency transactions and NFT verification.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">NFT-Gated Access</h3>
+                    <p class="feature-description">
+                        Unlock premium content with NFT ownership verification. Supports multiple blockchain networks
+                        and custom trait requirements for exclusive access.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">Ebook Reader</h3>
+                    <p class="feature-description">
+                        Built-in PDF.js ebook reader with content protection, progress tracking, and watermarking.
+                        Access books online with verified NFT ownership.
+                    </p>
+                </div>
+
+                <div class="feature-card">
                     <div class="feature-icon">🎁</div>
                     <h3 class="feature-title">NFT Certificates</h3>
                     <p class="feature-description">
@@ -409,7 +510,7 @@
                             <li>Security badges and guarantees</li>
                             <li>GoHighLevel contact integration</li>
                         </ul>
-                        <a href="01-product-detail-page.html" class="demo-link" target="_blank">
+                        <a href="01-product-detail-page.html" class="demo-link">
                             View Demo →
                         </a>
                     </div>
@@ -433,8 +534,7 @@
                             <li>Social media sharing</li>
                             <li>Additional access links</li>
                         </ul>
-                        <a href="02-order-confirmation.html?order_id=KB-2024-001&session_id=demo" class="demo-link"
-                            target="_blank">
+                        <a href="02-order-confirmation.html?order_id=KB-2024-001&session_id=demo" class="demo-link">
                             View Demo →
                         </a>
                     </div>
@@ -458,7 +558,7 @@
                             <li>Payment timer and status</li>
                             <li>Wallet address copying</li>
                         </ul>
-                        <a href="04-crypto-checkout.html" class="demo-link" target="_blank">
+                        <a href="04-crypto-checkout.html" class="demo-link">
                             View Demo →
                         </a>
                     </div>
@@ -472,17 +572,41 @@
                     <div class="demo-content">
                         <h3 class="demo-title">Admin Dashboard</h3>
                         <p class="demo-description">
-                            Comprehensive analytics dashboard with real-time revenue tracking, payment analytics, and
+                            Comprehensive analytics dashboard with Web3 analytics, revenue tracking, and real-time
                             transaction monitoring.
                         </p>
                         <ul class="demo-features">
+                            <li>Web3 analytics (wallet connections, NFT validations)</li>
                             <li>Real-time revenue charts</li>
                             <li>Payment method analytics</li>
                             <li>Transaction monitoring</li>
-                            <li>System status indicators</li>
                             <li>WebSocket live updates</li>
                         </ul>
-                        <a href="03-admin-dashboard.html" class="demo-link" target="_blank">
+                        <a href="03-admin-dashboard.html" class="demo-link">
+                            View Demo →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- NFT-Gated Ebook Reader -->
+                <div class="demo-card">
+                    <div class="demo-preview">
+                        📚
+                    </div>
+                    <div class="demo-content">
+                        <h3 class="demo-title">NFT-Gated Ebook Reader</h3>
+                        <p class="demo-description">
+                            Secure ebook reader with NFT access validation, content protection, and progress tracking.
+                            Only accessible with verified NFT ownership.
+                        </p>
+                        <ul class="demo-features">
+                            <li>NFT ownership verification</li>
+                            <li>PDF.js reader integration</li>
+                            <li>Content protection & watermarking</li>
+                            <li>Progress tracking & sync</li>
+                            <li>Session-based access control</li>
+                        </ul>
+                        <a href="05-ebook-reader.html?session=demo" class="demo-link">
                             View Demo →
                         </a>
                     </div>
@@ -506,7 +630,7 @@
                             <li>Responsive modal design</li>
                             <li>Easy GoHighLevel integration</li>
                         </ul>
-                        <a href="components/payment-modal.html" class="demo-link" target="_blank">
+                        <a href="components/payment-modal.html" class="demo-link">
                             View Component →
                         </a>
                     </div>
@@ -770,7 +894,60 @@
         console.log('   • Order Confirmation: 02-order-confirmation.html');
         console.log('   • Crypto Checkout: 04-crypto-checkout.html');
         console.log('   • Admin Dashboard: 03-admin-dashboard.html');
+        console.log('   • NFT-Gated Ebook Reader: 05-ebook-reader.html');
         console.log('   • Payment Modal: components/payment-modal.html');
+
+        // Wallet Connection functionality
+        let connectedWallet = null;
+        let currentChainId = null;
+
+        function openWalletModal() {
+            // For demo purposes, simulate wallet connection
+            setTimeout(() => {
+                const demoWallet = '0x1234...5678';
+                connectedWallet = demoWallet;
+                currentChainId = '0x1';
+
+                // Update UI
+                document.getElementById('connected-wallet').textContent = demoWallet;
+                document.getElementById('wallet-status').style.display = 'block';
+                document.getElementById('connect-wallet-btn').textContent = 'Connected';
+                document.getElementById('connect-wallet-btn').style.background = 'var(--success-color)';
+
+                console.log('✅ Demo wallet connected:', demoWallet);
+
+                // Show connection success
+                const message = document.createElement('div');
+                message.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: var(--success-color);
+                    color: white;
+                    padding: 1rem;
+                    border-radius: var(--border-radius);
+                    z-index: 1000;
+                    box-shadow: var(--shadow);
+                `;
+                message.textContent = '✅ Wallet Connected Successfully!';
+                document.body.appendChild(message);
+
+                setTimeout(() => {
+                    message.remove();
+                }, 3000);
+            }, 1000);
+        }
+
+        function updateWalletUI(walletAddress, chainId) {
+            connectedWallet = walletAddress;
+            currentChainId = chainId;
+
+            document.getElementById('connected-wallet').textContent =
+                `${walletAddress.substring(0, 6)}...${walletAddress.substring(38)}`;
+            document.getElementById('wallet-status').style.display = 'block';
+            document.getElementById('connect-wallet-btn').textContent = 'Connected';
+            document.getElementById('connect-wallet-btn').style.background = 'var(--success-color)';
+        }
     </script>
 </body>
 

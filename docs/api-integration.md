@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-This document provides comprehensive integration guidelines for Kane's Bookstore hybrid payment system, covering both Stripe and NowPayments APIs, along with custom endpoints for order management and digital asset delivery.
+This document provides comprehensive integration guidelines for Kane's Bookstore hybrid payment system, covering both Stripe and NowPayments APIs, along with custom endpoints for order management, digital asset delivery, **wallet connection functionality, NFT validation, and gated ebook reader access**.
 
 ## 🔧 Environment Setup
 
@@ -25,6 +25,21 @@ const PAYMENT_ENDPOINTS = {
     live: "https://api.nowpayments.io/v1/",
   },
 };
+
+const BLOCKCHAIN_ENDPOINTS = {
+  ethereum: {
+    mainnet: "https://mainnet.infura.io/v3/YOUR_PROJECT_ID",
+    testnet: "https://goerli.infura.io/v3/YOUR_PROJECT_ID",
+  },
+  polygon: {
+    mainnet: "https://polygon-rpc.com",
+    testnet: "https://rpc-mumbai.matic.today",
+  },
+  solana: {
+    mainnet: "https://api.mainnet-beta.solana.com",
+    testnet: "https://api.testnet.solana.com",
+  },
+};
 ```
 
 ### Authentication
@@ -42,6 +57,603 @@ const adminHeaders = {
   Authorization: `Bearer ${process.env.ADMIN_JWT_TOKEN}`,
   "Content-Type": "application/json",
 };
+
+// Wallet Authentication
+const walletHeaders = {
+  Authorization: `Bearer ${process.env.WALLET_SESSION_TOKEN}`,
+  "Content-Type": "application/json",
+  "X-Wallet-Address": connectedWalletAddress,
+  "X-Chain-ID": chainId.toString(),
+};
+```
+
+## 🔗 Wallet Connection API
+
+### 1. Initiate Wallet Connection
+
+```javascript
+// POST /api/wallet/connect/initiate
+const initiateWalletConnection = async (walletType, chainId) => {
+  const response = await fetch("/api/wallet/connect/initiate", {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      wallet_type: walletType, // 'metamask', 'walletconnect', 'coinbase', etc.
+      chain_id: chainId,
+      timestamp: Date.now(),
+    }),
+  });
+
+  const result = await response.json();
+  return result;
+};
+
+// Backend Implementation
+app.post("/api/wallet/connect/initiate", async (req, res) => {
+  try {
+    const { wallet_type, chain_id, timestamp } = req.body;
+
+    // Generate nonce for signature verification
+    const nonce = crypto.randomBytes(16).toString("hex");
+    const message = `Connect wallet to Kane's Bookstore\nNonce: ${nonce}\nTimestamp: ${timestamp}`;
+
+    // Store nonce temporarily (expires in 10 minutes)
+    await redis.setex(
+      `wallet_nonce_${nonce}`,
+      600,
+      JSON.stringify({
+        wallet_type,
+        chain_id,
+        timestamp,
+        created_at: new Date().toISOString(),
+      })
+    );
+
+    res.json({
+      success: true,
+      nonce,
+      message,
+      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+    });
+  } catch (error) {
+    console.error("Wallet connection initiation error:", error);
+    res.status(500).json({ error: "Failed to initiate wallet connection" });
+  }
+});
+```
+
+### 2. Verify Wallet Signature
+
+```javascript
+// POST /api/wallet/connect/verify
+const verifyWalletSignature = async (walletAddress, signature, nonce) => {
+  const response = await fetch("/api/wallet/connect/verify", {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      wallet_address: walletAddress,
+      signature: signature,
+      nonce: nonce,
+    }),
+  });
+
+  const result = await response.json();
+  return result;
+};
+
+// Backend Implementation
+app.post("/api/wallet/connect/verify", async (req, res) => {
+  try {
+    const { wallet_address, signature, nonce } = req.body;
+
+    // Retrieve nonce data
+    const nonceData = await redis.get(`wallet_nonce_${nonce}`);
+    if (!nonceData) {
+      return res.status(400).json({ error: "Invalid or expired nonce" });
+    }
+
+    const { wallet_type, chain_id, timestamp } = JSON.parse(nonceData);
+    const message = `Connect wallet to Kane's Bookstore\nNonce: ${nonce}\nTimestamp: ${timestamp}`;
+
+    // Verify signature using Web3
+    const recoveredAddress = await verifySignature(
+      message,
+      signature,
+      wallet_type
+    );
+
+    if (recoveredAddress.toLowerCase() !== wallet_address.toLowerCase()) {
+      return res.status(400).json({ error: "Invalid signature" });
+    }
+
+    // Create or update wallet connection
+    const connection = await WalletConnection.findOneAndUpdate(
+      { wallet_address: wallet_address.toLowerCase() },
+      {
+        wallet_address: wallet_address.toLowerCase(),
+        wallet_type,
+        chain_id,
+        signature,
+        message,
+        is_active: true,
+        last_connected_at: new Date(),
+      },
+      { upsert: true, new: true }
+    );
+
+    // Generate session token
+    const sessionToken = jwt.sign(
+      {
+        wallet_address: wallet_address.toLowerCase(),
+        wallet_type,
+        chain_id,
+        connection_id: connection._id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    // Clean up nonce
+    await redis.del(`wallet_nonce_${nonce}`);
+
+    res.json({
+      success: true,
+      session_token: sessionToken,
+      wallet_address: wallet_address.toLowerCase(),
+      wallet_type,
+      chain_id,
+      expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    });
+  } catch (error) {
+    console.error("Wallet signature verification error:", error);
+    res.status(500).json({ error: "Failed to verify wallet signature" });
+  }
+});
+```
+
+### 3. Get Wallet NFTs
+
+```javascript
+// GET /api/wallet/nfts/:walletAddress
+const getWalletNFTs = async (walletAddress, chainId) => {
+  const response = await fetch(
+    `/api/wallet/nfts/${walletAddress}?chain_id=${chainId}`,
+    {
+      method: "GET",
+      headers: walletHeaders,
+    }
+  );
+
+  const nfts = await response.json();
+  return nfts;
+};
+
+// Backend Implementation
+app.get("/api/wallet/nfts/:walletAddress", async (req, res) => {
+  try {
+    const { walletAddress } = req.params;
+    const { chain_id } = req.query;
+
+    // Validate wallet ownership
+    const isOwner = await validateWalletOwnership(req.headers, walletAddress);
+    if (!isOwner) {
+      return res.status(403).json({ error: "Unauthorized wallet access" });
+    }
+
+    // Get NFTs from multiple sources
+    const [alchemyNFTs, moralisNFTs, cachedNFTs] = await Promise.all([
+      getAlchemyNFTs(walletAddress, chain_id),
+      getMoralisNFTs(walletAddress, chain_id),
+      getCachedNFTs(walletAddress, chain_id),
+    ]);
+
+    // Merge and deduplicate NFTs
+    const allNFTs = mergeNFTData(alchemyNFTs, moralisNFTs, cachedNFTs);
+
+    // Update cache
+    await updateNFTCache(walletAddress, chain_id, allNFTs);
+
+    res.json({
+      success: true,
+      wallet_address: walletAddress,
+      chain_id: parseInt(chain_id),
+      nfts: allNFTs,
+      last_updated: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Get wallet NFTs error:", error);
+    res.status(500).json({ error: "Failed to retrieve wallet NFTs" });
+  }
+});
+```
+
+## 🛡️ NFT Validation API
+
+### 1. Validate NFT Ownership
+
+```javascript
+// POST /api/nft/validate
+const validateNFTOwnership = async (
+  walletAddress,
+  contractAddress,
+  tokenId,
+  chainId
+) => {
+  const response = await fetch("/api/nft/validate", {
+    method: "POST",
+    headers: walletHeaders,
+    body: JSON.stringify({
+      wallet_address: walletAddress,
+      contract_address: contractAddress,
+      token_id: tokenId,
+      chain_id: chainId,
+    }),
+  });
+
+  const result = await response.json();
+  return result;
+};
+
+// Backend Implementation
+app.post("/api/nft/validate", async (req, res) => {
+  try {
+    const { wallet_address, contract_address, token_id, chain_id } = req.body;
+
+    // Validate wallet ownership
+    const isOwner = await validateWalletOwnership(req.headers, wallet_address);
+    if (!isOwner) {
+      return res.status(403).json({ error: "Unauthorized wallet access" });
+    }
+
+    // Perform on-chain validation
+    const provider = getProvider(chain_id);
+    const contract = new ethers.Contract(
+      contract_address,
+      ERC721_ABI,
+      provider
+    );
+
+    let ownerAddress;
+    try {
+      ownerAddress = await contract.ownerOf(token_id);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ error: "NFT does not exist or invalid contract" });
+    }
+
+    const isValid = ownerAddress.toLowerCase() === wallet_address.toLowerCase();
+
+    if (isValid) {
+      // Get NFT metadata
+      const metadata = await getNFTMetadata(
+        contract_address,
+        token_id,
+        chain_id
+      );
+
+      // Store/update NFT ownership record
+      await NFTOwnership.findOneAndUpdate(
+        { contract_address, token_id, chain_id },
+        {
+          wallet_address: wallet_address.toLowerCase(),
+          contract_address,
+          token_id,
+          chain_id,
+          metadata_uri: metadata.tokenURI,
+          collection_name: metadata.collection_name,
+          token_name: metadata.name,
+          attributes: metadata.attributes,
+          last_verified_at: new Date(),
+          is_valid: true,
+        },
+        { upsert: true, new: true }
+      );
+    }
+
+    res.json({
+      success: true,
+      is_valid: isValid,
+      owner_address: ownerAddress,
+      wallet_address: wallet_address.toLowerCase(),
+      contract_address,
+      token_id,
+      chain_id,
+      verified_at: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("NFT validation error:", error);
+    res.status(500).json({ error: "Failed to validate NFT ownership" });
+  }
+});
+```
+
+### 2. Check Book Access
+
+```javascript
+// GET /api/books/:bookId/access
+const checkBookAccess = async (bookId, walletAddress) => {
+  const response = await fetch(`/api/books/${bookId}/access`, {
+    method: "GET",
+    headers: walletHeaders,
+  });
+
+  const access = await response.json();
+  return access;
+};
+
+// Backend Implementation
+app.get("/api/books/:bookId/access", async (req, res) => {
+  try {
+    const { bookId } = req.params;
+    const walletAddress = req.headers["x-wallet-address"];
+
+    if (!walletAddress) {
+      return res.status(400).json({ error: "Wallet address required" });
+    }
+
+    // Get book requirements
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+
+    // Check existing access
+    const existingAccess = await BookAccess.findOne({
+      book_id: bookId,
+      wallet_address: walletAddress.toLowerCase(),
+    });
+
+    if (existingAccess && existingAccess.expires_at > new Date()) {
+      return res.json({
+        success: true,
+        has_access: true,
+        access_type: existingAccess.access_type,
+        access_method: existingAccess.access_method,
+        expires_at: existingAccess.expires_at,
+      });
+    }
+
+    // Check NFT-based access
+    if (book.nft_collection_address) {
+      const nfts = await NFTOwnership.find({
+        wallet_address: walletAddress.toLowerCase(),
+        contract_address: book.nft_collection_address,
+        is_valid: true,
+      });
+
+      if (nfts.length > 0) {
+        // Check if any NFT meets the trait requirements
+        const qualifyingNFT = nfts.find((nft) =>
+          matchesTraitRequirements(nft.attributes, book.required_nft_traits)
+        );
+
+        if (qualifyingNFT) {
+          // Grant access
+          await BookAccess.findOneAndUpdate(
+            { book_id: bookId, wallet_address: walletAddress.toLowerCase() },
+            {
+              book_id: bookId,
+              wallet_address: walletAddress.toLowerCase(),
+              access_type: "full",
+              access_method: "nft_validation",
+              qualifying_nft_id: qualifyingNFT._id,
+              last_accessed_at: new Date(),
+            },
+            { upsert: true, new: true }
+          );
+
+          return res.json({
+            success: true,
+            has_access: true,
+            access_type: "full",
+            access_method: "nft_validation",
+            qualifying_nft: qualifyingNFT,
+          });
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      has_access: false,
+      required_nft_collection: book.nft_collection_address,
+      required_traits: book.required_nft_traits,
+    });
+  } catch (error) {
+    console.error("Book access check error:", error);
+    res.status(500).json({ error: "Failed to check book access" });
+  }
+});
+```
+
+## 📖 Ebook Reader API
+
+### 1. Generate Reading Session
+
+```javascript
+// POST /api/reader/session
+const generateReadingSession = async (bookId, walletAddress) => {
+  const response = await fetch("/api/reader/session", {
+    method: "POST",
+    headers: walletHeaders,
+    body: JSON.stringify({
+      book_id: bookId,
+      wallet_address: walletAddress,
+    }),
+  });
+
+  const session = await response.json();
+  return session;
+};
+
+// Backend Implementation
+app.post("/api/reader/session", async (req, res) => {
+  try {
+    const { book_id, wallet_address } = req.body;
+
+    // Validate wallet ownership
+    const isOwner = await validateWalletOwnership(req.headers, wallet_address);
+    if (!isOwner) {
+      return res.status(403).json({ error: "Unauthorized wallet access" });
+    }
+
+    // Check book access
+    const hasAccess = await checkBookAccess(book_id, wallet_address);
+    if (!hasAccess) {
+      return res.status(403).json({ error: "No access to this book" });
+    }
+
+    // Generate reading session token
+    const sessionToken = jwt.sign(
+      {
+        book_id,
+        wallet_address: wallet_address.toLowerCase(),
+        access_type: "reader",
+        session_id: crypto.randomUUID(),
+      },
+      process.env.READER_JWT_SECRET,
+      { expiresIn: "15m" } // Short-lived token
+    );
+
+    res.json({
+      success: true,
+      session_token: sessionToken,
+      book_id,
+      wallet_address: wallet_address.toLowerCase(),
+      expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+    });
+  } catch (error) {
+    console.error("Reading session generation error:", error);
+    res.status(500).json({ error: "Failed to generate reading session" });
+  }
+});
+```
+
+### 2. Get Book Content
+
+```javascript
+// GET /api/reader/book/:bookId/content
+const getBookContent = async (bookId, sessionToken) => {
+  const response = await fetch(`/api/reader/book/${bookId}/content`, {
+    method: "GET",
+    headers: {
+      ...headers,
+      Authorization: `Bearer ${sessionToken}`,
+    },
+  });
+
+  const content = await response.json();
+  return content;
+};
+
+// Backend Implementation
+app.get("/api/reader/book/:bookId/content", async (req, res) => {
+  try {
+    const { bookId } = req.params;
+    const token = req.headers.authorization?.replace("Bearer ", "");
+
+    if (!token) {
+      return res.status(401).json({ error: "Reading session token required" });
+    }
+
+    // Verify session token
+    const decoded = jwt.verify(token, process.env.READER_JWT_SECRET);
+
+    if (decoded.book_id !== bookId) {
+      return res.status(403).json({ error: "Invalid session for this book" });
+    }
+
+    // Get book
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({ error: "Book not found" });
+    }
+
+    // Get PDF content with watermark
+    const pdfBuffer = await generateWatermarkedPDF(
+      book.pdf_file_url,
+      decoded.wallet_address
+    );
+
+    // Update reading progress
+    await updateReadingProgress(decoded.wallet_address, bookId);
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'inline; filename="book.pdf"',
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    });
+
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error("Book content retrieval error:", error);
+    res.status(500).json({ error: "Failed to retrieve book content" });
+  }
+});
+```
+
+### 3. Update Reading Progress
+
+```javascript
+// POST /api/reader/progress
+const updateReadingProgress = async (bookId, chapter, walletAddress) => {
+  const response = await fetch("/api/reader/progress", {
+    method: "POST",
+    headers: walletHeaders,
+    body: JSON.stringify({
+      book_id: bookId,
+      chapter: chapter,
+      wallet_address: walletAddress,
+      timestamp: Date.now(),
+    }),
+  });
+
+  const result = await response.json();
+  return result;
+};
+
+// Backend Implementation
+app.post("/api/reader/progress", async (req, res) => {
+  try {
+    const { book_id, chapter, wallet_address, timestamp } = req.body;
+
+    // Validate wallet ownership
+    const isOwner = await validateWalletOwnership(req.headers, wallet_address);
+    if (!isOwner) {
+      return res.status(403).json({ error: "Unauthorized wallet access" });
+    }
+
+    // Update reading progress
+    await BookAccess.findOneAndUpdate(
+      { book_id, wallet_address: wallet_address.toLowerCase() },
+      {
+        current_chapter: chapter,
+        last_accessed_at: new Date(timestamp),
+        $push: {
+          reading_progress: {
+            chapter,
+            timestamp: new Date(timestamp),
+          },
+        },
+      },
+      { upsert: true, new: true }
+    );
+
+    res.json({
+      success: true,
+      book_id,
+      chapter,
+      wallet_address: wallet_address.toLowerCase(),
+      updated_at: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Reading progress update error:", error);
+    res.status(500).json({ error: "Failed to update reading progress" });
+  }
+});
 ```
 
 ## 💳 Stripe Integration
@@ -50,13 +662,18 @@ const adminHeaders = {
 
 ```javascript
 // POST /api/payments/stripe/create-session
-const createStripeSession = async (productId, customerId) => {
+const createStripeSession = async (
+  productId,
+  customerId,
+  walletAddress = null
+) => {
   const response = await fetch("/api/payments/stripe/create-session", {
     method: "POST",
     headers: headers,
     body: JSON.stringify({
       product_id: productId,
       customer_id: customerId,
+      wallet_address: walletAddress, // Optional: Link payment to wallet
       success_url: `${window.location.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${window.location.origin}/checkout/cancel`,
     }),
@@ -74,7 +691,7 @@ const createStripeSession = async (productId, customerId) => {
 // Backend Implementation
 app.post("/api/payments/stripe/create-session", async (req, res) => {
   try {
-    const { product_id, customer_id } = req.body;
+    const { product_id, customer_id, wallet_address } = req.body;
 
     // Validate inputs
     const product = await Product.findById(product_id);
@@ -107,6 +724,7 @@ app.post("/api/payments/stripe/create-session", async (req, res) => {
       metadata: {
         product_id: product_id,
         customer_id: customer_id,
+        wallet_address: wallet_address || "",
         order_type: "digital_product",
       },
     });
@@ -166,7 +784,7 @@ app.post(
 // Handle successful checkout
 const handleStripeCheckoutCompleted = async (session) => {
   try {
-    const { product_id, customer_id } = session.metadata;
+    const { product_id, customer_id, wallet_address } = session.metadata;
 
     // Create order record
     const order = await Order.create({
@@ -179,6 +797,7 @@ const handleStripeCheckoutCompleted = async (session) => {
       status: "completed",
       stripe_session_id: session.id,
       stripe_payment_intent_id: session.payment_intent,
+      wallet_address: wallet_address || null,
       completed_at: new Date(),
     });
 
@@ -191,6 +810,21 @@ const handleStripeCheckoutCompleted = async (session) => {
       { download_token: downloadToken, access_token: accessToken }
     );
 
+    // Grant book access if wallet is connected
+    if (wallet_address) {
+      await BookAccess.findOneAndUpdate(
+        { book_id: product_id, wallet_address: wallet_address.toLowerCase() },
+        {
+          book_id: product_id,
+          wallet_address: wallet_address.toLowerCase(),
+          access_type: "full",
+          access_method: "purchase",
+          last_accessed_at: new Date(),
+        },
+        { upsert: true, new: true }
+      );
+    }
+
     // Send confirmation email
     await sendOrderConfirmationEmail(customer_id, order.id);
 
@@ -198,8 +832,18 @@ const handleStripeCheckoutCompleted = async (session) => {
     await generateNFTCertificate(order.id);
 
     console.log(`Order ${order.order_id} completed successfully`);
+
+    // Update GoHighLevel contact
+    await updateGHLContact(customer_id, {
+      payment_method: "stripe",
+      transaction_id: session.payment_intent,
+      order_id: order.order_id,
+      wallet_address: wallet_address || "",
+      book_access: "granted",
+    });
   } catch (error) {
-    console.error("Error handling Stripe checkout completion:", error);
+    console.error("Stripe checkout completion error:", error);
+    throw error;
   }
 };
 ```

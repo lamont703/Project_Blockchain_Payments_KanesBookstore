@@ -2,7 +2,7 @@
 
 ## 🎯 System Overview
 
-Kane's Bookstore requires a hybrid payment checkout system built on GoHighLevel that supports both traditional USD payments via Stripe and cryptocurrency payments via NowPayments. The system must be scalable, secure, and provide real-time transaction monitoring.
+Kane's Bookstore requires a hybrid payment checkout system built on GoHighLevel that supports both traditional USD payments via Stripe and cryptocurrency payments via NowPayments. The system must be scalable, secure, and provide real-time transaction monitoring. **NEW: The system now includes wallet connection functionality and a gated ebook reader that validates NFT ownership for access to digital content.**
 
 ## 🏗 Architecture Requirements
 
@@ -13,6 +13,8 @@ Kane's Bookstore requires a hybrid payment checkout system built on GoHighLevel 
 - **Browser Support**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
 - **Performance**: Page load time < 3 seconds, LCP < 2.5 seconds
 - **Accessibility**: WCAG 2.1 AA compliance
+- **Wallet Integration**: MetaMask, WalletConnect, Coinbase Wallet, Trust Wallet
+- **Ebook Reader**: PDF.js-based reader with NFT-gated access controls
 
 ### Backend Requirements
 
@@ -21,6 +23,8 @@ Kane's Bookstore requires a hybrid payment checkout system built on GoHighLevel 
 - **Caching**: Redis for session management and rate limiting
 - **Queue System**: Bull/Agenda for background processing
 - **File Storage**: AWS S3 or Google Cloud Storage for digital assets
+- **Blockchain Integration**: Web3.js/Ethers.js for NFT validation
+- **NFT Standards**: ERC-721, ERC-1155 support across multiple chains
 
 ### Security Requirements
 
@@ -29,6 +33,8 @@ Kane's Bookstore requires a hybrid payment checkout system built on GoHighLevel 
 - **API Security**: JWT tokens, rate limiting, input validation
 - **Data Protection**: GDPR and CCPA compliance
 - **Fraud Prevention**: Real-time transaction monitoring
+- **Wallet Security**: Secure signature verification, nonce-based authentication
+- **NFT Validation**: On-chain verification with fallback to cached metadata
 
 ## 🔌 Integration Requirements
 
@@ -83,6 +89,70 @@ Kane's Bookstore requires a hybrid payment checkout system built on GoHighLevel 
 }
 ```
 
+### Wallet Connection Integration
+
+```json
+{
+  "wallet_requirements": {
+    "supported_wallets": [
+      "metamask",
+      "walletconnect",
+      "coinbase_wallet",
+      "trust_wallet",
+      "phantom",
+      "rainbow"
+    ],
+    "supported_chains": [
+      {
+        "name": "Ethereum",
+        "chainId": 1,
+        "rpcUrl": "https://mainnet.infura.io/v3/YOUR_PROJECT_ID"
+      },
+      {
+        "name": "Polygon",
+        "chainId": 137,
+        "rpcUrl": "https://polygon-rpc.com"
+      },
+      {
+        "name": "Binance Smart Chain",
+        "chainId": 56,
+        "rpcUrl": "https://bsc-dataseed.binance.org"
+      },
+      {
+        "name": "Solana",
+        "chainId": 101,
+        "rpcUrl": "https://api.mainnet-beta.solana.com"
+      }
+    ],
+    "authentication_methods": ["signature_verification", "message_signing"],
+    "session_management": "jwt_with_wallet_address"
+  }
+}
+```
+
+### NFT Validation Integration
+
+```json
+{
+  "nft_validation_requirements": {
+    "supported_standards": ["ERC-721", "ERC-1155", "SPL-Token"],
+    "validation_methods": ["on_chain_query", "metadata_cache", "opensea_api"],
+    "required_attributes": [
+      "token_id",
+      "contract_address",
+      "owner_address",
+      "metadata_uri",
+      "collection_name"
+    ],
+    "access_control": {
+      "book_access": "nft_ownership_verification",
+      "chapter_unlock": "specific_trait_verification",
+      "exclusive_content": "premium_nft_validation"
+    }
+  }
+}
+```
+
 ### GoHighLevel Integration
 
 ```json
@@ -101,7 +171,12 @@ Kane's Bookstore requires a hybrid payment checkout system built on GoHighLevel 
       "transaction_id",
       "crypto_currency",
       "nft_certificate_id",
-      "download_token"
+      "download_token",
+      "wallet_address",
+      "connected_wallet_type",
+      "owned_nfts",
+      "book_access_level",
+      "last_read_chapter"
     ]
   }
 }
@@ -129,6 +204,7 @@ CREATE TABLE orders (
     download_token VARCHAR(255),
     access_token VARCHAR(255),
     nft_certificate_id VARCHAR(255),
+    wallet_address VARCHAR(255), -- Connected wallet address
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     completed_at TIMESTAMP NULL,
@@ -137,6 +213,7 @@ CREATE TABLE orders (
     INDEX idx_order_id (order_id),
     INDEX idx_status (status),
     INDEX idx_payment_method (payment_method),
+    INDEX idx_wallet_address (wallet_address),
     INDEX idx_created_at (created_at)
 );
 ```
@@ -168,12 +245,115 @@ CREATE TABLE crypto_transactions (
 );
 ```
 
+### Wallet Connections Collection
+
+```sql
+CREATE TABLE wallet_connections (
+    id BIGSERIAL PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    wallet_address VARCHAR(255) NOT NULL,
+    wallet_type ENUM('metamask', 'walletconnect', 'coinbase', 'trust', 'phantom') NOT NULL,
+    chain_id INTEGER NOT NULL,
+    signature VARCHAR(500), -- Authentication signature
+    message VARCHAR(500), -- Signed message
+    is_active BOOLEAN DEFAULT TRUE,
+    last_connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY unique_customer_wallet (customer_id, wallet_address),
+    INDEX idx_wallet_address (wallet_address),
+    INDEX idx_customer_id (customer_id),
+    INDEX idx_chain_id (chain_id)
+);
+```
+
+### NFT Ownership Collection
+
+```sql
+CREATE TABLE nft_ownership (
+    id BIGSERIAL PRIMARY KEY,
+    wallet_address VARCHAR(255) NOT NULL,
+    contract_address VARCHAR(255) NOT NULL,
+    token_id VARCHAR(255) NOT NULL,
+    chain_id INTEGER NOT NULL,
+    metadata_uri VARCHAR(1000),
+    collection_name VARCHAR(255),
+    token_name VARCHAR(255),
+    attributes JSON,
+    verified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_verified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_valid BOOLEAN DEFAULT TRUE,
+
+    UNIQUE KEY unique_nft (contract_address, token_id, chain_id),
+    INDEX idx_wallet_address (wallet_address),
+    INDEX idx_contract_address (contract_address),
+    INDEX idx_collection_name (collection_name),
+    INDEX idx_verified_at (verified_at)
+);
+```
+
+### Book Access Collection
+
+```sql
+CREATE TABLE book_access (
+    id BIGSERIAL PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    book_id BIGINT NOT NULL,
+    access_type ENUM('full', 'chapter', 'preview') NOT NULL,
+    access_method ENUM('purchase', 'nft_validation', 'admin_grant') NOT NULL,
+    wallet_address VARCHAR(255),
+    qualifying_nft_id BIGINT, -- Links to nft_ownership table
+    expires_at TIMESTAMP NULL,
+    last_accessed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    current_chapter INTEGER DEFAULT 1,
+    reading_progress JSON, -- Track reading progress per chapter
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (qualifying_nft_id) REFERENCES nft_ownership(id),
+    UNIQUE KEY unique_customer_book (customer_id, book_id),
+    INDEX idx_customer_id (customer_id),
+    INDEX idx_book_id (book_id),
+    INDEX idx_wallet_address (wallet_address),
+    INDEX idx_access_type (access_type)
+);
+```
+
+### Books Collection
+
+```sql
+CREATE TABLE books (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    description TEXT,
+    cover_image_url VARCHAR(1000),
+    pdf_file_url VARCHAR(1000),
+    total_chapters INTEGER DEFAULT 1,
+    price DECIMAL(10,2) NOT NULL,
+    nft_collection_address VARCHAR(255), -- Required NFT collection for access
+    required_nft_traits JSON, -- Specific traits required for access
+    access_level ENUM('public', 'premium', 'exclusive') DEFAULT 'public',
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_title (title),
+    INDEX idx_author (author),
+    INDEX idx_nft_collection (nft_collection_address),
+    INDEX idx_access_level (access_level)
+);
+```
+
 ## 🚀 Performance Requirements
 
 ### Response Time Targets
 
 - **Product Page Load**: < 2 seconds
 - **Payment Processing**: < 5 seconds
+- **Wallet Connection**: < 3 seconds
+- **NFT Validation**: < 5 seconds
+- **Ebook Reader Load**: < 4 seconds
 - **API Response**: < 500ms (95th percentile)
 - **Database Queries**: < 100ms average
 - **File Downloads**: < 3 seconds for 10MB files
@@ -181,7 +361,9 @@ CREATE TABLE crypto_transactions (
 ### Scalability Requirements
 
 - **Concurrent Users**: Support 1,000 simultaneous users
+- **Concurrent Readers**: Support 500 simultaneous ebook readers
 - **Transaction Volume**: 10,000 transactions per day
+- **NFT Validations**: 50,000 validations per day
 - **Peak Load**: 5x normal load during promotions
 - **Database**: Auto-scaling read replicas
 - **CDN**: Global content delivery for static assets
@@ -195,214 +377,114 @@ CREATE TABLE crypto_transactions (
     "log_aggregation": "ELK Stack / Splunk",
     "uptime_monitoring": "Pingdom / StatusCake",
     "error_tracking": "Sentry",
-    "analytics": "Google Analytics 4 + Mixpanel"
+    "analytics": "Google Analytics 4 + Mixpanel",
+    "blockchain_monitoring": "Alchemy / Moralis",
+    "wallet_analytics": "DappRadar / WalletConnect Analytics"
   },
   "alerts": {
-    "payment_failure_rate": "> 5%",
-    "api_response_time": "> 1s",
-    "error_rate": "> 1%",
-    "uptime": "< 99.5%"
+    "payment_failures": "5+ failures in 5 minutes",
+    "wallet_connection_errors": "10+ errors in 10 minutes",
+    "nft_validation_failures": "20+ failures in 15 minutes",
+    "ebook_reader_errors": "15+ errors in 10 minutes",
+    "api_response_time": "> 2 seconds average",
+    "database_connections": "> 80% pool usage",
+    "server_resources": "CPU > 80%, Memory > 85%"
   }
 }
 ```
 
-## 🔒 Security Specifications
+## 🔒 Security Requirements
 
-### Authentication & Authorization
+### Wallet Security
 
-```javascript
-// JWT Token Structure
-{
-  "admin_token": {
-    "algorithm": "RS256",
-    "expiration": "8h",
-    "refresh_required": true,
-    "scopes": ["admin:read", "admin:write", "orders:manage"]
-  },
-  "download_token": {
-    "algorithm": "HS256",
-    "expiration": "24h",
-    "single_use": false,
-    "scopes": ["download:product", "download:nft"]
-  }
-}
-```
+- **Signature Verification**: All wallet connections must be verified via cryptographic signatures
+- **Nonce Management**: Prevent replay attacks with time-based nonces
+- **Address Validation**: Checksummed address validation for all wallet addresses
+- **Session Management**: JWT tokens with wallet address binding
+- **Rate Limiting**: 10 connection attempts per minute per IP
 
-### Data Encryption
+### NFT Validation Security
 
-- **In Transit**: TLS 1.3 with Perfect Forward Secrecy
-- **At Rest**: AES-256 encryption for sensitive data
-- **Key Management**: AWS KMS or HashiCorp Vault
-- **PII Protection**: Tokenization for customer data
+- **On-Chain Verification**: Primary validation against blockchain data
+- **Metadata Verification**: Cross-reference with trusted metadata sources
+- **Cache Poisoning Protection**: Signature verification for cached NFT data
+- **Access Control**: Time-based access tokens with NFT ownership verification
+- **Audit Trail**: Complete logging of all NFT validation attempts
 
-### Webhook Security
+### Ebook Reader Security
 
-```javascript
-// Stripe Webhook Verification
-const verifyStripeWebhook = (payload, signature) => {
-  return stripe.webhooks.constructEvent(
-    payload,
-    signature,
-    process.env.STRIPE_WEBHOOK_SECRET
-  );
-};
-
-// NowPayments IPN Verification
-const verifyNowPaymentsIPN = (payload, signature) => {
-  const expected = crypto
-    .createHmac("sha512", process.env.NOWPAYMENTS_IPN_SECRET)
-    .update(payload)
-    .digest("hex");
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
-};
-```
-
-## 🧪 Testing Requirements
-
-### Test Coverage Targets
-
-- **Unit Tests**: > 80% code coverage
-- **Integration Tests**: All API endpoints
-- **E2E Tests**: Complete user flows
-- **Performance Tests**: Load testing scenarios
-- **Security Tests**: OWASP Top 10 vulnerability scanning
-
-### Testing Environments
-
-```json
-{
-  "environments": {
-    "development": {
-      "stripe": "test_mode",
-      "nowpayments": "sandbox",
-      "database": "local_postgres",
-      "monitoring": "disabled"
-    },
-    "staging": {
-      "stripe": "test_mode",
-      "nowpayments": "sandbox",
-      "database": "staging_postgres",
-      "monitoring": "enabled"
-    },
-    "production": {
-      "stripe": "live_mode",
-      "nowpayments": "live",
-      "database": "production_postgres",
-      "monitoring": "full_suite"
-    }
-  }
-}
-```
-
-### Test Scenarios
-
-#### Payment Flow Testing
-
-- Successful Stripe payment
-- Failed Stripe payment (declined card)
-- Successful crypto payment (all supported currencies)
-- Failed crypto payment (insufficient amount)
-- Partial crypto payment handling
-- Payment timeout scenarios
-- Webhook delivery failures
-- Network interruption recovery
+- **Content Protection**: DRM-like protection for PDF content
+- **Access Token Validation**: Short-lived tokens (15 minutes) for content access
+- **Watermarking**: Dynamic watermarks with user wallet address
+- **Download Prevention**: Disable right-click, print, and save functionality
+- **Session Binding**: Reader sessions tied to validated wallet connections
 
 ## 📱 Mobile Requirements
 
-### Responsive Design Breakpoints
+### Wallet Connection on Mobile
 
-```css
-/* Mobile First Approach */
-$breakpoints: (
-  "xs": 320px,
-  /* Small phones */ "sm": 480px,
-  /* Large phones */ "md": 768px,
-  /* Tablets */ "lg": 1024px,
-  /* Small laptops */ "xl": 1200px,
-  /* Laptops */ "xxl": 1440px /* Large screens */
-);
+- **Mobile Wallet Support**: Deep linking to mobile wallets (MetaMask, Trust Wallet, etc.)
+- **QR Code Connection**: WalletConnect QR codes for desktop-to-mobile connection
+- **Responsive Design**: Touch-optimized wallet connection interface
+- **Error Handling**: Clear error messages for mobile wallet connection issues
+
+### Mobile Reading Experience
+
+- **Touch Navigation**: Swipe gestures for page navigation
+- **Zoom Controls**: Pinch-to-zoom for PDF content
+- **Reading Mode**: Optimized typography and spacing for mobile reading
+- **Offline Caching**: Limited offline access for authenticated users
+- **Progress Sync**: Reading progress synchronization across devices
+
+## 🧪 Testing Requirements
+
+### Automated Testing
+
+- **Unit Tests**: 90% code coverage for all wallet and NFT validation functions
+- **Integration Tests**: End-to-end wallet connection and NFT validation flows
+- **Load Testing**: 1000 concurrent users with wallet connections
+- **Security Testing**: Penetration testing for wallet authentication
+- **Cross-Browser Testing**: All major browsers and mobile devices
+
+### Manual Testing
+
+- **Wallet Compatibility**: Test with all supported wallet types
+- **NFT Validation**: Test with various NFT collections and traits
+- **Reader Functionality**: Test ebook reader across different PDF types
+- **Error Scenarios**: Test network failures, invalid NFTs, expired sessions
+- **User Experience**: Usability testing for wallet connection flow
+
+## 🚀 Deployment Requirements
+
+### Infrastructure
+
+- **Load Balancer**: NGINX or AWS ALB with SSL termination
+- **Application Servers**: PM2 cluster mode with auto-restart
+- **Database**: Master-slave configuration with read replicas
+- **Redis Cluster**: High availability session storage
+- **CDN**: CloudFlare or AWS CloudFront for global content delivery
+- **Monitoring**: Full-stack monitoring with 99.9% uptime target
+
+### Environment Variables
+
+```bash
+# Wallet Integration
+WEB3_INFURA_PROJECT_ID=your_infura_project_id
+WEB3_ALCHEMY_API_KEY=your_alchemy_api_key
+WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
+
+# NFT Validation
+OPENSEA_API_KEY=your_opensea_api_key
+MORALIS_API_KEY=your_moralis_api_key
+NFT_STORAGE_API_KEY=your_nft_storage_api_key
+
+# Ebook Reader
+PDF_ENCRYPTION_KEY=your_pdf_encryption_key
+WATERMARK_API_KEY=your_watermark_api_key
+CONTENT_PROTECTION_SECRET=your_content_protection_secret
 ```
 
-### Mobile Performance Targets
-
-- **First Contentful Paint**: < 1.5s
-- **Time to Interactive**: < 3s
-- **Cumulative Layout Shift**: < 0.1
-- **Touch Target Size**: ≥ 44px
-- **Viewport Support**: All orientations
-
-### Progressive Web App Features
-
-- **Service Worker**: Offline payment form caching
-- **Web App Manifest**: Add to homescreen capability
-- **Push Notifications**: Order status updates
-- **Background Sync**: Retry failed requests
-
-## 🔄 Deployment Requirements
-
-### Infrastructure Requirements
-
-```yaml
-production:
-  compute:
-    web_servers: 2x t3.large (4 vCPU, 8GB RAM)
-    background_workers: 1x t3.medium (2 vCPU, 4GB RAM)
-    database: db.r5.large (2 vCPU, 16GB RAM)
-    cache: elasticache.t3.micro (1 vCPU, 0.5GB RAM)
-
-  storage:
-    database_storage: 100GB SSD (gp3)
-    file_storage: S3 bucket with CDN
-    backup_retention: 30 days automated backups
-
-  networking:
-    load_balancer: Application Load Balancer
-    ssl_certificate: AWS Certificate Manager
-    cdn: CloudFront distribution
-    dns: Route 53 with health checks
-```
-
-### CI/CD Pipeline
-
-```yaml
-pipeline_stages:
-  - code_quality:
-      - eslint
-      - prettier
-      - security_scan
-  - testing:
-      - unit_tests
-      - integration_tests
-      - e2e_tests
-  - deployment:
-      - staging_deploy
-      - smoke_tests
-      - production_deploy
-      - post_deploy_verification
-```
-
-## 📊 Compliance Requirements
-
-### Financial Regulations
-
-- **PCI DSS**: Level 1 compliance
-- **SOX**: Financial controls and reporting
-- **KYC/AML**: Customer verification for high-value transactions
-- **Tax Reporting**: Integration with tax calculation services
-
-### Data Protection
-
-- **GDPR**: EU data protection compliance
-- **CCPA**: California privacy compliance
-- **Data Retention**: Configurable retention policies
-- **Right to Deletion**: Customer data removal workflows
-
-### Audit Requirements
-
-- **Transaction Logs**: Immutable audit trail
-- **Admin Actions**: All administrative actions logged
-- **Data Access**: Who accessed what data when
-- **System Changes**: Configuration and code change tracking
+This comprehensive technical requirements document now includes all the necessary specifications for implementing wallet connection functionality and the gated ebook reader system, ensuring secure NFT validation and seamless user experience across all platforms.
 
 ---
 
