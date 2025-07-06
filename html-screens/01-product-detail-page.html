@@ -219,6 +219,25 @@
             margin: 32px 0;
         }
 
+        /* Smooth scroll and animation styles */
+        .scroll-target {
+            scroll-margin-top: 20px;
+        }
+
+        /* Enhanced section visibility */
+        #nft-access-section,
+        #purchase-section,
+        #success-section {
+            transition: all 0.4s ease;
+        }
+
+        #nft-access-section.show,
+        #purchase-section.show,
+        #success-section.show {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
         @media (max-width: 768px) {
             .access-paths {
                 grid-template-columns: 1fr;
@@ -248,12 +267,11 @@
     <header class="kb-header">
         <div class="container">
             <nav class="kb-nav">
-                <a href="/" class="kb-logo">Kane's Bookstore</a>
+                <a href="../index.html" class="kb-logo">Kane's Bookstore</a>
                 <ul class="kb-nav-links">
-                    <li><a href="/products">Products</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/support">Support</a></li>
-                    <li><a href="/account">Account</a></li>
+                    <li><a href="../index.html#screens">All Demos</a></li>
+                    <li><a href="../index.html#features">Features</a></li>
+                    <li><a href="../index.html#demo-journey">Demo Journey</a></li>
                 </ul>
 
                 <!-- Wallet Connection -->
@@ -287,7 +305,7 @@
             <div class="row">
                 <!-- Product Image -->
                 <div class="col col-12 col-lg-6">
-                    <img src="https://via.placeholder.com/800x600/4fc3f7/white?text=Digital+Marketing+Mastery"
+                    <img src="https://storage.googleapis.com/msgsndr/YyXjhz49RRIC60sTREka/media/471261f9-ae0f-4820-bbae-65537b93f351.png"
                         alt="Digital Marketing Mastery Book Cover" class="product-image" data-product-image>
                 </div>
 
@@ -350,7 +368,7 @@
                     </div>
 
                     <!-- NFT Access Section (Hidden by default) -->
-                    <div id="nft-access-section" style="display: none;">
+                    <div id="nft-access-section" class="scroll-target" style="display: none;">
                         <div class="nft-info-card">
                             <h4>🎨 NFT Access Requirements</h4>
                             <p><strong>Required Collection:</strong> Kane's Premium Collection</p>
@@ -370,7 +388,7 @@
                     </div>
 
                     <!-- Purchase Section (Hidden by default) -->
-                    <div id="purchase-section" style="display: none;">
+                    <div id="purchase-section" class="scroll-target" style="display: none;">
                         <!-- Pricing Display -->
                         <div class="pricing-container">
                             <div class="usd-price" data-product-price>$25.00</div>
@@ -387,7 +405,7 @@
                             <button class="btn btn-primary btn-block btn-lg" data-action="stripe-payment"
                                 data-product-id="digital-marketing-mastery"
                                 data-product-title="Digital Marketing Mastery" data-product-price="25.00"
-                                data-product-image="https://via.placeholder.com/800x600/4fc3f7/white?text=Digital+Marketing+Mastery"
+                                data-product-image="https://storage.googleapis.com/msgsndr/YyXjhz49RRIC60sTREka/media/471261f9-ae0f-4820-bbae-65537b93f351.png"
                                 data-product-description="Transform your business with our comprehensive digital marketing guide.">
                                 💳 Buy with Credit Card ($25.00)
                             </button>
@@ -399,7 +417,7 @@
                     </div>
 
                     <!-- Success Section (Hidden by default) -->
-                    <div id="success-section" style="display: none;">
+                    <div id="success-section" class="scroll-target" style="display: none;">
                         <div class="alert alert-success"
                             style="background: #d4edda; color: #155724; padding: 16px; border-radius: 8px; margin: 16px 0;">
                             <h4>✅ Access Granted!</h4>
@@ -757,17 +775,51 @@
         // Track current access path
         let currentPath = null;
 
+        // Smooth scroll utility function
+        function smoothScrollTo(elementId, offset = -20) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const elementPosition = element.offsetTop + offset;
+                window.scrollTo({
+                    top: elementPosition,
+                    behavior: 'smooth'
+                });
+
+                // Add gentle highlight effect
+                element.style.transition = 'box-shadow 0.3s ease';
+                element.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.3)';
+                setTimeout(() => {
+                    element.style.boxShadow = '';
+                }, 2000);
+            }
+        }
+
         // Select NFT path
         function selectNFTPath() {
             currentPath = 'nft';
             document.getElementById('nft-path').classList.add('active');
             document.getElementById('purchase-path').classList.remove('active');
-            document.getElementById('nft-access-section').style.display = 'block';
-            document.getElementById('purchase-section').style.display = 'none';
+
+            // Hide purchase section and show NFT section with animation
+            const purchaseSection = document.getElementById('purchase-section');
+            const nftSection = document.getElementById('nft-access-section');
+
+            purchaseSection.style.display = 'none';
+            purchaseSection.classList.remove('show');
+
+            nftSection.style.display = 'block';
+            setTimeout(() => {
+                nftSection.classList.add('show');
+            }, 50);
 
             // Enable wallet connection
             document.getElementById('check-nfts-btn').disabled = false;
             document.getElementById('check-nfts-btn').innerHTML = '🔗 Connect Wallet to Check NFTs';
+
+            // Smooth scroll to NFT section after brief delay for display
+            setTimeout(() => {
+                smoothScrollTo('nft-access-section');
+            }, 200);
 
             // Analytics
             gtag('event', 'select_access_path', {
@@ -781,8 +833,23 @@
             currentPath = 'purchase';
             document.getElementById('purchase-path').classList.add('active');
             document.getElementById('nft-path').classList.remove('active');
-            document.getElementById('purchase-section').style.display = 'block';
-            document.getElementById('nft-access-section').style.display = 'none';
+
+            // Hide NFT section and show purchase section with animation
+            const nftSection = document.getElementById('nft-access-section');
+            const purchaseSection = document.getElementById('purchase-section');
+
+            nftSection.style.display = 'none';
+            nftSection.classList.remove('show');
+
+            purchaseSection.style.display = 'block';
+            setTimeout(() => {
+                purchaseSection.classList.add('show');
+            }, 50);
+
+            // Smooth scroll to purchase section after brief delay for display
+            setTimeout(() => {
+                smoothScrollTo('purchase-section');
+            }, 200);
 
             // Analytics
             gtag('event', 'select_access_path', {
@@ -815,8 +882,17 @@
 
                 if (hasNFT) {
                     status.innerHTML = '✅ NFT Found! You have access to this book.';
-                    document.getElementById('success-section').style.display = 'block';
+                    const successSection = document.getElementById('success-section');
+                    successSection.style.display = 'block';
+                    setTimeout(() => {
+                        successSection.classList.add('show');
+                    }, 50);
                     document.getElementById('access-message').innerHTML = 'Your NFT grants you free access to this book!';
+
+                    // Smooth scroll to success section after brief delay for display
+                    setTimeout(() => {
+                        smoothScrollTo('success-section');
+                    }, 300);
 
                     // Analytics
                     gtag('event', 'nft_access_granted', {
@@ -828,7 +904,7 @@
                     button.innerHTML = '🔄 Check Again';
                     button.disabled = false;
 
-                    // Show purchase option
+                    // Show purchase option with smooth scroll
                     setTimeout(() => {
                         if (confirm('No qualifying NFTs found. Would you like to purchase the book instead?')) {
                             selectPurchasePath();
@@ -851,7 +927,61 @@
                 access_type: currentPath
             });
 
+            // Add loading state before navigation
+            const button = document.getElementById('btn-read-now');
+            if (button) {
+                button.innerHTML = '🔄 Opening Reader...';
+                button.disabled = true;
+            }
+
             window.location.href = '05-ebook-reader.html';
+        }
+
+        // Smooth scroll to section by name (for external calls)
+        function scrollToSection(sectionName) {
+            const sectionMap = {
+                'access-paths': 'nft-path',
+                'how-it-works': 'how-it-works',
+                'product-description': 'product-description',
+                'product-features': 'product-features',
+                'security-badges': 'security-badges'
+            };
+
+            const elementId = sectionMap[sectionName] || sectionName;
+            smoothScrollTo(elementId);
+        }
+
+        // Enhanced payment button interactions
+        function handlePaymentButtonClick(event) {
+            const button = event.target;
+            const action = button.getAttribute('data-action');
+
+            if (action === 'stripe-payment') {
+                // Add loading state
+                button.innerHTML = '🔄 Processing...';
+                button.disabled = true;
+
+                // Simulate processing and show success
+                setTimeout(() => {
+                    const purchaseSection = document.getElementById('purchase-section');
+                    const successSection = document.getElementById('success-section');
+
+                    purchaseSection.style.display = 'none';
+                    purchaseSection.classList.remove('show');
+
+                    successSection.style.display = 'block';
+                    setTimeout(() => {
+                        successSection.classList.add('show');
+                    }, 50);
+
+                    document.getElementById('access-message').innerHTML = 'Payment successful! You now have full access to this book.';
+
+                    // Scroll to success section
+                    setTimeout(() => {
+                        smoothScrollTo('success-section');
+                    }, 300);
+                }, 2000);
+            }
         }
 
         // Initialize page with enhanced flow detection
@@ -860,6 +990,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const accessType = urlParams.get('access');
             const source = urlParams.get('source');
+            const scrollTo = urlParams.get('scrollTo');
 
             // Handle returning users with contextual messaging
             if (source === 'reader') {
@@ -875,11 +1006,50 @@
                 selectPurchasePath();
             }
 
+            // Handle direct scroll requests from URL
+            if (scrollTo) {
+                setTimeout(() => {
+                    scrollToSection(scrollTo);
+                }, 500);
+            }
+
             // Check if wallet is already connected
             if (window.ethereum && window.ethereum.selectedAddress) {
                 document.getElementById('check-nfts-btn').disabled = false;
                 document.getElementById('check-nfts-btn').innerHTML = '🔍 Check My NFTs';
             }
+
+            // Add enhanced payment button interactions
+            document.querySelectorAll('[data-action="stripe-payment"]').forEach(button => {
+                button.addEventListener('click', handlePaymentButtonClick);
+            });
+
+            // Add smooth scroll to "Read More" links if they exist
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    smoothScrollTo(targetId);
+                });
+            });
+
+            // Add entrance animations for sections
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Observe key sections for animations
+            document.querySelectorAll('#nft-access-section, #purchase-section, #success-section').forEach(section => {
+                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                observer.observe(section);
+            });
         });
 
         function showReturningUserMessage(message) {

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /html-screens/developer-assessment.html
+Disallow: /DEVELOPER_ASSESSMENT_README.md
+
+# Allow everything else
+Allow: / 
